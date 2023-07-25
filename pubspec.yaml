@@ -1,0 +1,15 @@
+name: svart
+version: 0.1.0
+description: TODO
+repository: https://github.com/chykon/svart
+issue_tracker: https://github.com/chykon/svart/issues
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  meta: ^1.9.1
+
+dev_dependencies:
+  test: ^1.24.4
+  very_good_analysis: ^5.0.0+1
