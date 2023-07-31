@@ -1,0 +1,17 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+permissions: {}
+
+jobs:
+  main-checks:
+    name: Main Checks
+    timeout-minutes: 30
+    runs-on: ubuntu-22.04
