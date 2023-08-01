@@ -1,17 +1,15 @@
 import 'dart:math';
 import 'package:svart/svart.dart';
 
-class MemoryControllerUnit extends Module {
-  MemoryControllerUnit(
+class MemoryUnit extends Module {
+  MemoryUnit(
     Var clock,
-    Var enable,
     Var write,
     Var selectByte,
     Var address,
     Var inputData,
-  ) : super(definitionName: 'memory_controller_unit') {
+  ) : super(definitionName: 'memory_unit') {
     clock = addInput('clock', clock);
-    enable = addInput('enable', enable);
     write = addInput('write', write);
     selectByte = addInput('select_byte', selectByte);
     address = addInput('address', address, width: 16);
@@ -22,73 +20,44 @@ class MemoryControllerUnit extends Module {
       return addInternal(name: 'memory_element_$index', width: 8);
     });
 
-    final writeByteIffs = <Iff>[];
-    final readByteIffs = <Iff>[];
-    final writeHalfwordIffs = <Iff>[];
-    final readHalfwordIffs = <Iff>[];
-    for (var i = 0; i < memory.length; ++i) {
-      writeByteIffs.add(
+    final readIffs = <Iff>[];
+    final writeIffs = <Iff>[];
+    for (var i = 0; i < memory.length; i += 2) {
+      readIffs.add(
         Iff(
-          address.eq(Const(i, width: address.width)),
-          then: [memory[i].assign(inputData.part(7, 0))],
+          address.part(15, 1).eq(Const(i, width: address.width).part(15, 1)),
+          then: [outputData.assign(memory[i + 1].cat(memory[i]))],
         ),
       );
-      readByteIffs.add(
+      writeIffs.add(
         Iff(
-          address.eq(Const(i, width: address.width)),
-          then: [outputData.assign(outputData.part(15, 8).cat(memory[i]))],
-        ),
-      );
-      writeHalfwordIffs.add(
-        Iff(
-          address.eq(Const(i, width: address.width)),
+          address.part(15, 1).eq(Const(i, width: address.width).part(15, 1)),
           then: [
-            if (i.isEven) ...[
-              memory[i].assign(inputData.part(7, 0)),
-              memory[i + 1].assign(inputData.part(15, 8))
-            ] else
-              // The write operation must respect memory alignment.
-              Assert(address.neq(Const(i, width: address.width)))
-          ],
-        ),
-      );
-      readHalfwordIffs.add(
-        Iff(
-          address.eq(Const(i, width: address.width)),
-          then: [
-            if (i.isEven)
-              outputData.assign(memory[i + 1].cat(memory[i]))
-            else
-              // The read operation must respect memory alignment.
-              Assert(address.neq(Const(i, width: address.width)))
+            If(
+              selectByte,
+              then: [
+                If(
+                  address.part(0, 0).eq(Const(0)),
+                  then: [memory[i].assign(inputData.part(7, 0))],
+                  orElse: [memory[i + 1].assign(inputData.part(7, 0))],
+                )
+              ],
+              orElse: [
+                // Memory alignment must be considered when writing.
+                Assert(address.part(0, 0).eq(Const(0))),
+                memory[i].assign(inputData.part(7, 0)),
+                memory[i + 1].assign(inputData.part(15, 8))
+              ],
+            )
           ],
         ),
       );
     }
 
+    addCombinational([When(readIffs)]);
+
     addSyncSequential(PosEdge(clock), [
-      If(
-        enable,
-        then: [
-          If(
-            write,
-            then: [
-              If(
-                selectByte,
-                then: [When(writeByteIffs)],
-                orElse: [When(writeHalfwordIffs)],
-              )
-            ],
-            orElse: [
-              If(
-                selectByte,
-                then: [When(readByteIffs)],
-                orElse: [When(readHalfwordIffs)],
-              )
-            ],
-          )
-        ],
-      )
+      If(write, then: [When(writeIffs)])
     ]);
   }
 
