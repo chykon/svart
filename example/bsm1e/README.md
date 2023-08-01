@@ -15,8 +15,8 @@
 * Instruction:
   * width - 16 bit (halfword)
   * alignment - halfword
-  * transport/operating format - `<Source/Left (S/L): byte>-<Destination/Right (D/R): byte>`
-  * encoding - `(LSB)[D/R, S/L](MSB)`
+  * transport/operating format - `<Destination/Alpha (D/A): byte>-<Source/Omega (S/O): byte>`
+  * encoding - `(LSB)[D/A, S/O](MSB)`
 * Socket array index width - byte
 * Signed number representation - two's complement
 * Endianness - little-endian
