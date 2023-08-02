@@ -26,13 +26,11 @@ class ControlFlowUnit extends Module {
               Iff(
                 action.eq(
                   Const(
-                    ControlFlowUnit.action.setAddressLowPart,
+                    ControlFlowUnit.action.setAddress.lowPart,
                     width: action.width,
                   ),
                 ),
                 then: [
-                  // Zero bit will be truncated.
-                  Assert(data.part(0, 0).eq(Const(0))),
                   branchAddress
                       .assign(branchAddress.part(14, 7).cat(data.part(7, 1)))
                 ],
@@ -40,7 +38,7 @@ class ControlFlowUnit extends Module {
               Iff(
                 action.eq(
                   Const(
-                    ControlFlowUnit.action.setAddressHighPart,
+                    ControlFlowUnit.action.setAddress.highPart,
                     width: action.width,
                   ),
                 ),
@@ -55,11 +53,7 @@ class ControlFlowUnit extends Module {
                     width: action.width,
                   ),
                 ),
-                then: [
-                  // Only the zero bit is used.
-                  Assert(data.part(7, 1).eq(Const(0, width: 7))),
-                  value.assign(data.part(0, 0))
-                ],
+                then: [value.assign(data.part(0, 0))],
               ),
               Iff(
                 action.eq(
@@ -103,11 +97,10 @@ class ControlFlowUnit extends Module {
 
   static const action = (
     none: 0,
-    setAddressLowPart: 1,
-    setAddressHighPart: 2,
+    setAddress: (lowPart: 1, highPart: 2),
     setValue: 3,
     callOperation: 4
   );
 
-  static const operation = (snapshot: 0, branchEqz: 1);
+  static const operation = (snapshot: 0, branch: (eqz: 1));
 }
