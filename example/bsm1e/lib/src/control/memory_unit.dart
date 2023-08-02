@@ -17,7 +17,7 @@ class MemoryUnit extends Module {
     outputData = addOutput('output_data', width: 16);
 
     final memory = List.generate(pow(2, address.width).toInt(), (index) {
-      return addInternal(name: 'memory_element_$index', width: 8);
+      return addInternal(name: 'memo_$index', width: 8);
     });
 
     final readIffs = <Iff>[];
