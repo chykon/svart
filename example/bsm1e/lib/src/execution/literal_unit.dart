@@ -1,8 +1,8 @@
 import 'package:svart/svart.dart';
 
-class ValueKeepUnit extends Module {
-  ValueKeepUnit(Var clock, Var write, Var inputValue)
-      : super(definitionName: 'value_keep_unit') {
+class LiteralUnit extends Module {
+  LiteralUnit(Var clock, Var write, Var inputValue)
+      : super(definitionName: 'literal_unit') {
     clock = addInput('clock', clock);
     write = addInput('write', write);
     inputValue = addInput('input_value', inputValue, width: 8);
