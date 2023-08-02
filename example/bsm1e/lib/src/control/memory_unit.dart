@@ -43,8 +43,6 @@ class MemoryUnit extends Module {
                 )
               ],
               orElse: [
-                // Memory alignment must be considered when writing.
-                Assert(address.part(0, 0).eq(Const(0))),
                 memory[i].assign(inputData.part(7, 0)),
                 memory[i + 1].assign(inputData.part(15, 8))
               ],
