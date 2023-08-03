@@ -4,6 +4,11 @@ description: >-
   Svart is an embedded (in Dart) domain-specific language for
   describing binary circuits, generating a strict subset of SystemVerilog and
   easily interacting with external tools.
+topics:
+  - hardware-design
+  - hardware-description-language
+  - systemverilog
+  - svart
 repository: https://github.com/chykon/svart
 issue_tracker: https://github.com/chykon/svart/issues
 
