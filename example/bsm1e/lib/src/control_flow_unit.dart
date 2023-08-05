@@ -3,88 +3,87 @@ import 'package:svart/svart.dart';
 class ControlFlowUnit extends Module {
   ControlFlowUnit(
     Var clock,
-    Var action,
+    Var act,
     Var data,
+    Var resetBranch,
     Var currentAddress,
   ) : super(definitionName: 'control_flow_unit') {
     clock = addInput('clock', clock);
-    action = addInput('action', action, width: 3);
+    act = addInput('act', act, width: 3);
     data = addInput('data', data, width: 8);
+    resetBranch = addInput('reset_branch', resetBranch);
     currentAddress = addInput('current_address', currentAddress, width: 15);
     branch = addOutput('branch');
     branchAddress = addOutput('branch_address', width: 15);
 
     final value = addInternal(name: 'value');
+    final op = addInternal(name: 'op', width: 2);
+
+    addCombinational([op.assign(data.part(1, 0))]);
 
     addSyncSequential(PosEdge(clock), [
-      branch.assign(Const(0)),
+      If(resetBranch, then: [branch.assign(Const(0))]),
       If(
-        action.neq(Const(ControlFlowUnit.action.none, width: action.width)),
+        act.neq(Const(actcode.none, width: act.width)),
         then: [
           When(
             [
               Iff(
-                action.eq(
-                  Const(
-                    ControlFlowUnit.action.setAddress.lowPart,
-                    width: action.width,
-                  ),
-                ),
+                act.eq(Const(actcode.setAddress.lowPart, width: act.width)),
                 then: [
                   branchAddress
                       .assign(branchAddress.part(14, 7).cat(data.part(7, 1)))
                 ],
               ),
               Iff(
-                action.eq(
-                  Const(
-                    ControlFlowUnit.action.setAddress.highPart,
-                    width: action.width,
-                  ),
-                ),
+                act.eq(Const(actcode.setAddress.highPart, width: act.width)),
                 then: [
                   branchAddress.assign(data.cat(branchAddress.part(6, 0)))
                 ],
               ),
               Iff(
-                action.eq(
-                  Const(
-                    ControlFlowUnit.action.setValue,
-                    width: action.width,
-                  ),
-                ),
+                act.eq(Const(actcode.setValue, width: act.width)),
                 then: [value.assign(data.part(0, 0))],
               ),
               Iff(
-                action.eq(
-                  Const(
-                    ControlFlowUnit.action.callOperation,
-                    width: action.width,
-                  ),
-                ),
+                act.eq(Const(actcode.operate, width: act.width)),
                 then: [
-                  If(
-                    data
-                        .part(0, 0)
-                        .eq(Const(ControlFlowUnit.operation.snapshot)),
-                    then: [branchAddress.assign(currentAddress)],
+                  When(
+                    [
+                      Iff(
+                        op.eq(Const(opcode.snapshot, width: op.width)),
+                        then: [branchAddress.assign(currentAddress)],
+                      ),
+                      Iff(
+                        op.eq(Const(opcode.branch.eqz, width: op.width)),
+                        then: [
+                          If(
+                            value.eq(Const(0)),
+                            then: [branch.assign(Const(1))],
+                          )
+                        ],
+                      ),
+                      Iff(
+                        op.eq(Const(opcode.branch.neqz, width: op.width)),
+                        then: [
+                          If(
+                            value.neq(Const(0)),
+                            then: [branch.assign(Const(1))],
+                          )
+                        ],
+                      )
+                    ],
                     orElse: [
-                      If(value.eq(Const(0)), then: [branch.assign(Const(1))])
+                      // `Op` must be in a certain range.
+                      Assert(op.lte(Const(opcode.branch.neqz, width: op.width)))
                     ],
                   )
                 ],
               )
             ],
             orElse: [
-              // `Action` must be in a certain range.
-              Assert(
-                action.lte(
-                  Const(
-                    ControlFlowUnit.action.callOperation,
-                    width: action.width,
-                  ),
-                ),
-              )
+              // `Act` must be in a certain range.
+              Assert(act.lte(Const(actcode.operate, width: act.width)))
             ],
           )
         ],
@@ -95,12 +94,19 @@ class ControlFlowUnit extends Module {
   late final Var branch;
   late final Var branchAddress;
 
-  static const action = (
+  // action code
+  static const actcode = (
     none: 0,
     setAddress: (lowPart: 1, highPart: 2),
     setValue: 3,
-    callOperation: 4
+    operate: 4,
   );
 
-  static const operation = (snapshot: 0, branch: (eqz: 1));
+  static const opcode = (
+    snapshot: 0,
+    branch: (
+      eqz: 1, // equal zero
+      neqz: 2, // not equal zero
+    ),
+  );
 }
