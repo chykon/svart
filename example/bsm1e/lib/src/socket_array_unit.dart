@@ -1,9 +1,12 @@
 import 'package:svart/svart.dart';
+import 'control_flow_unit.dart';
 
 class SocketArrayUnit extends Module {
   SocketArrayUnit(
     Var instruction,
     ({Var outputValue}) fromLU, // Literal Unit
+    ({Var branchAddress}) fromCFU, // Control Flow Unit
+    ({Var outputData}) fromRFU, // Register File Unit
   ) : super(definitionName: 'socket_array_unit') {
     instruction = addInput('instruction', instruction, width: 16);
     fromLU = (
@@ -13,10 +16,31 @@ class SocketArrayUnit extends Module {
         width: fromLU.outputValue.width,
       )
     );
+    fromCFU = (
+      branchAddress: addInput(
+        fromCFU.branchAddress.name,
+        fromCFU.branchAddress,
+        width: fromCFU.branchAddress.width,
+      )
+    );
+    fromRFU = (
+      outputData: addInput(
+        fromRFU.outputData.name,
+        fromRFU.outputData,
+        width: fromRFU.outputData.width,
+      )
+    );
     illegalInstruction = addOutput('illegal_instruction');
     toLU = (
       write: addOutput('write'),
       inputValue: addOutput('input_value', width: 8)
+    );
+    toCFU =
+        (act: addOutput('act', width: 3), data: addOutput('data', width: 8));
+    toRFU = (
+      write: addOutput('write'),
+      address: addOutput('address', width: 7),
+      inputData: addOutput('input_data', width: 8)
     );
 
     final alpha = addInternal(name: 'alpha', width: 8);
@@ -28,6 +52,9 @@ class SocketArrayUnit extends Module {
     addCombinational([
       illegalInstruction.assign(Const(0)),
       toLU.write.assign(Const(0)),
+      toCFU.act
+          .assign(Const(ControlFlowUnit.actcode.none, width: toCFU.act.width)),
+      toRFU.write.assign(Const(0)),
       If(
         // asm: aux.nop (if condition is false)
         alpha
@@ -51,6 +78,145 @@ class SocketArrayUnit extends Module {
                   toLU.inputValue.assign(omega),
                   toLU.write.assign(Const(1))
                 ],
+              ),
+              // asm: <rf.r0-rf.r127> <source> (abstract)
+              Iff(
+                alpha
+                    .gte(Const(index.rf.address.first, width: omega.width))
+                    .and(
+                      omega.lte(
+                        Const(index.rf.address.last, width: omega.width),
+                      ),
+                    ),
+                then: [
+                  When(
+                    [
+                      // asm: <rf.r0-rf.r127> lit
+                      Iff(
+                        omega.eq(Const(index.lit, width: omega.width)),
+                        then: [
+                          toRFU.address.assign(alpha.part(6, 0)),
+                          toRFU.inputData.assign(fromLU.outputValue),
+                          toRFU.write.assign(Const(1))
+                        ],
+                      ),
+                      // asm: <rf.r0-rf.r127> br.address.low
+                      Iff(
+                        omega.eq(
+                          Const(index.br.address.low, width: omega.width),
+                        ),
+                        then: [
+                          toRFU.address.assign(alpha.part(6, 0)),
+                          toRFU.inputData.assign(
+                            fromCFU.branchAddress.part(6, 0).cat(Const(0)),
+                          ),
+                          toRFU.write.assign(Const(1))
+                        ],
+                      ),
+                      // asm: <rf.r0-rf.r127> br.address.high
+                      Iff(
+                        omega.eq(
+                          Const(index.br.address.high, width: omega.width),
+                        ),
+                        then: [
+                          toRFU.address.assign(alpha.part(6, 0)),
+                          toRFU.inputData
+                              .assign(fromCFU.branchAddress.part(14, 7)),
+                          toRFU.write.assign(Const(1))
+                        ],
+                      )
+                    ],
+                    orElse: [illegalInstruction.assign(Const(1))],
+                  )
+                ],
+              ),
+              // asm: <destination> <rf.r0-rf.r127> (abstract)
+              Iff(
+                omega
+                    .gte(Const(index.rf.address.first, width: omega.width))
+                    .and(
+                      omega.lte(
+                        Const(index.rf.address.last, width: omega.width),
+                      ),
+                    ),
+                then: [
+                  When(
+                    [
+                      // asm: br.address.low <rf.r0-rf.r127>
+                      Iff(
+                        alpha.eq(
+                          Const(index.br.address.low, width: alpha.width),
+                        ),
+                        then: [
+                          toRFU.address.assign(omega.part(6, 0)),
+                          toCFU.data.assign(fromRFU.outputData),
+                          toCFU.act.assign(
+                            Const(
+                              ControlFlowUnit.actcode.setAddress.lowPart,
+                              width: toCFU.act.width,
+                            ),
+                          )
+                        ],
+                      ),
+                      // asm: br.address.high <rf.r0-rf.r127>
+                      Iff(
+                        alpha.eq(
+                          Const(index.br.address.high, width: alpha.width),
+                        ),
+                        then: [
+                          toRFU.address.assign(omega.part(6, 0)),
+                          toCFU.data.assign(fromRFU.outputData),
+                          toCFU.act.assign(
+                            Const(
+                              ControlFlowUnit.actcode.setAddress.highPart,
+                              width: toCFU.act.width,
+                            ),
+                          )
+                        ],
+                      ),
+                      // asm: br.value <rf.r0-rf.r127>
+                      Iff(
+                        alpha.eq(Const(index.br.value, width: alpha.width)),
+                        then: [
+                          toRFU.address.assign(omega.part(6, 0)),
+                          toCFU.data.assign(fromRFU.outputData),
+                          toCFU.act.assign(
+                            Const(
+                              ControlFlowUnit.actcode.setValue,
+                              width: toCFU.act.width,
+                            ),
+                          )
+                        ],
+                      ),
+                      // asm: br.op <rf.r0-rf.r127>
+                      Iff(
+                        alpha.eq(Const(index.br.op, width: alpha.width)),
+                        then: [
+                          toRFU.address.assign(omega.part(6, 0)),
+                          If(
+                            fromRFU.outputData.lte(
+                              Const(
+                                ControlFlowUnit.opcode.branch.neqz,
+                                width: fromRFU.outputData.width,
+                              ),
+                            ),
+                            then: [
+                              toCFU.data.assign(fromRFU.outputData),
+                              toCFU.act.assign(
+                                Const(
+                                  ControlFlowUnit.actcode.operate,
+                                  width: toCFU.act.width,
+                                ),
+                              )
+                            ],
+                            orElse: [illegalInstruction.assign(Const(1))],
+                          )
+                        ],
+                      )
+                    ],
+                    orElse: [illegalInstruction.assign(Const(1))],
+                  )
+                ],
               )
             ],
             orElse: [illegalInstruction.assign(Const(1))],
@@ -62,6 +228,8 @@ class SocketArrayUnit extends Module {
 
   late final Var illegalInstruction;
   late final ({Var write, Var inputValue}) toLU;
+  late final ({Var act, Var data}) toCFU;
+  late final ({Var write, Var address, Var inputData}) toRFU;
 
   static const index = (
     // auxiliary
