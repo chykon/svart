@@ -1,5 +1,6 @@
 import 'package:svart/svart.dart';
 import 'control_flow_unit.dart';
+import 'load_store_unit.dart';
 
 class SocketArrayUnit extends Module {
   SocketArrayUnit(
@@ -7,6 +8,7 @@ class SocketArrayUnit extends Module {
     ({Var outputValue}) fromLU, // Literal Unit
     ({Var branchAddress}) fromCFU, // Control Flow Unit
     ({Var outputData}) fromRFU, // Register File Unit
+    ({Var targetData}) fromLSU, // Load-Store Unit
   ) : super(definitionName: 'socket_array_unit') {
     instruction = addInput('instruction', instruction, width: 16);
     fromLU = (
@@ -30,6 +32,13 @@ class SocketArrayUnit extends Module {
         width: fromRFU.outputData.width,
       )
     );
+    fromLSU = (
+      targetData: addInput(
+        fromLSU.targetData.name,
+        fromLSU.targetData,
+        width: fromLSU.targetData.width,
+      )
+    );
     illegalInstruction = addOutput('illegal_instruction');
     toLU = (
       write: addOutput('write'),
@@ -42,6 +51,8 @@ class SocketArrayUnit extends Module {
       address: addOutput('address', width: 7),
       inputData: addOutput('input_data', width: 8)
     );
+    toLSU =
+        (act: addOutput('act', width: 3), data: addOutput('data', width: 8));
 
     final alpha = addInternal(name: 'alpha', width: 8);
     final omega = addInternal(name: 'omega', width: 8);
@@ -55,6 +66,8 @@ class SocketArrayUnit extends Module {
       toCFU.act
           .assign(Const(ControlFlowUnit.actcode.none, width: toCFU.act.width)),
       toRFU.write.assign(Const(0)),
+      toLSU.act
+          .assign(Const(LoadStoreUnit.actcode.none, width: toLSU.act.width)),
       If(
         // asm: aux.nop (if condition is false)
         alpha
@@ -122,6 +135,29 @@ class SocketArrayUnit extends Module {
                           toRFU.address.assign(alpha.part(6, 0)),
                           toRFU.inputData
                               .assign(fromCFU.branchAddress.part(14, 7)),
+                          toRFU.write.assign(Const(1))
+                        ],
+                      ),
+                      // asm: <rf.r0-rf.r127> mem.data.low
+                      Iff(
+                        omega.eq(
+                          Const(index.mem.data.low, width: omega.width),
+                        ),
+                        then: [
+                          toRFU.address.assign(alpha.part(6, 0)),
+                          toRFU.inputData.assign(fromLSU.targetData.part(7, 0)),
+                          toRFU.write.assign(Const(1))
+                        ],
+                      ),
+                      // asm: <rf.r0-rf.r127> mem.data.high
+                      Iff(
+                        omega.eq(
+                          Const(index.mem.data.high, width: omega.width),
+                        ),
+                        then: [
+                          toRFU.address.assign(alpha.part(6, 0)),
+                          toRFU.inputData
+                              .assign(fromLSU.targetData.part(15, 8)),
                           toRFU.write.assign(Const(1))
                         ],
                       )
@@ -212,6 +248,95 @@ class SocketArrayUnit extends Module {
                             orElse: [illegalInstruction.assign(Const(1))],
                           )
                         ],
+                      ),
+                      // asm: mem.address.low <rf.r0-rf.r127>
+                      Iff(
+                        alpha.eq(
+                          Const(index.mem.address.low, width: alpha.width),
+                        ),
+                        then: [
+                          toRFU.address.assign(omega.part(6, 0)),
+                          toLSU.data.assign(fromRFU.outputData),
+                          toLSU.act.assign(
+                            Const(
+                              LoadStoreUnit.actcode.setAddress.lowByte,
+                              width: toLSU.act.width,
+                            ),
+                          )
+                        ],
+                      ),
+                      // asm: mem.address.high <rf.r0-rf.r127>
+                      Iff(
+                        alpha.eq(
+                          Const(index.mem.address.high, width: alpha.width),
+                        ),
+                        then: [
+                          toRFU.address.assign(omega.part(6, 0)),
+                          toLSU.data.assign(fromRFU.outputData),
+                          toLSU.act.assign(
+                            Const(
+                              LoadStoreUnit.actcode.setAddress.highByte,
+                              width: toLSU.act.width,
+                            ),
+                          )
+                        ],
+                      ),
+                      // asm: mem.data.low <rf.r0-rf.r127>
+                      Iff(
+                        alpha.eq(
+                          Const(index.mem.data.low, width: alpha.width),
+                        ),
+                        then: [
+                          toRFU.address.assign(omega.part(6, 0)),
+                          toLSU.data.assign(fromRFU.outputData),
+                          toLSU.act.assign(
+                            Const(
+                              LoadStoreUnit.actcode.setData.lowByte,
+                              width: toLSU.act.width,
+                            ),
+                          )
+                        ],
+                      ),
+                      // asm: mem.data.high <rf.r0-rf.r127>
+                      Iff(
+                        alpha.eq(
+                          Const(index.mem.data.high, width: alpha.width),
+                        ),
+                        then: [
+                          toRFU.address.assign(omega.part(6, 0)),
+                          toLSU.data.assign(fromRFU.outputData),
+                          toLSU.act.assign(
+                            Const(
+                              LoadStoreUnit.actcode.setData.highByte,
+                              width: toLSU.act.width,
+                            ),
+                          )
+                        ],
+                      ),
+                      // asm: mem.op <rf.r0-rf.r127>
+                      Iff(
+                        alpha.eq(Const(index.mem.op, width: alpha.width)),
+                        then: [
+                          toRFU.address.assign(omega.part(6, 0)),
+                          If(
+                            fromRFU.outputData.lte(
+                              Const(
+                                LoadStoreUnit.opcode.store.halfword,
+                                width: fromRFU.outputData.width,
+                              ),
+                            ),
+                            then: [
+                              toLSU.data.assign(fromRFU.outputData),
+                              toLSU.act.assign(
+                                Const(
+                                  LoadStoreUnit.actcode.operate,
+                                  width: toLSU.act.width,
+                                ),
+                              )
+                            ],
+                            orElse: [illegalInstruction.assign(Const(1))],
+                          )
+                        ],
                       )
                     ],
                     orElse: [illegalInstruction.assign(Const(1))],
@@ -230,6 +355,7 @@ class SocketArrayUnit extends Module {
   late final ({Var write, Var inputValue}) toLU;
   late final ({Var act, Var data}) toCFU;
   late final ({Var write, Var address, Var inputData}) toRFU;
+  late final ({Var act, Var data}) toLSU;
 
   static const index = (
     // auxiliary
