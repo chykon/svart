@@ -161,9 +161,9 @@ abstract class Module {
               '(${connections.join(', ')});');
     }
 
-    String parseProcedure(Procedure procedure) {
-      var partCounter = 0;
+    var partCounter = 0;
 
+    String parseProcedure(Procedure procedure) {
       ({String basic, List<String> auxiliaries}) parseVaria(Var varia) {
         late final String basic;
         final auxiliaries = <String>[];
