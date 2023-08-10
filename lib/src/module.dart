@@ -161,9 +161,9 @@ abstract class Module {
               '(${connections.join(', ')});');
     }
 
-    String parseProcedure(Procedure procedure) {
-      var partCounter = 0;
+    var partCounter = 0;
 
+    String parseProcedure(Procedure procedure) {
       ({String basic, List<String> auxiliaries}) parseVaria(Var varia) {
         late final String basic;
         final auxiliaries = <String>[];
@@ -304,6 +304,19 @@ abstract class Module {
             auxiliaries
               ..clear()
               ..addAll(auxiliaryDeclarations);
+          } else if (procedure is SyncSequential) {
+            final auxiliaryDeclarations = <String>[];
+            final auxiliaryAssignments = <String>[];
+            for (final auxiliary in auxiliaries) {
+              final temp = auxiliary.split(' = ');
+              auxiliaryDeclarations.add('${temp.first};\n');
+              final temp2 = temp.first.split(' ').last;
+              auxiliaryAssignments.add('  always_comb $temp2 = ${temp.last}\n');
+            }
+            auxiliaries
+              ..clear()
+              ..addAll(auxiliaryDeclarations)
+              ..addAll(auxiliaryAssignments);
           }
           return (basics: basics, auxiliaries: auxiliaries);
         }
