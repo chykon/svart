@@ -1,4 +1,5 @@
 import 'package:svart/svart.dart';
+import 'arithmetic_logic_unit.dart';
 import 'control_flow_unit.dart';
 import 'load_store_unit.dart';
 
@@ -9,6 +10,7 @@ class SocketArrayUnit extends Module {
     ({Var branchAddress}) fromCFU, // Control Flow Unit
     ({Var outputData}) fromRFU, // Register File Unit
     ({Var targetData}) fromLSU, // Load-Store Unit
+    ({Var result}) fromALU, // Arithmetic Logic Unit
   ) : super(definitionName: 'socket_array_unit') {
     instruction = addInput('instruction', instruction, width: 16);
     fromLU = (
@@ -39,6 +41,13 @@ class SocketArrayUnit extends Module {
         width: fromLSU.targetData.width,
       )
     );
+    fromALU = (
+      result: addInput(
+        fromALU.result.name,
+        fromALU.result,
+        width: fromALU.result.width,
+      )
+    );
     illegalInstruction = addOutput('illegal_instruction');
     toLU = (
       write: addOutput('write'),
@@ -53,6 +62,8 @@ class SocketArrayUnit extends Module {
     );
     toLSU =
         (act: addOutput('act', width: 3), data: addOutput('data', width: 8));
+    toALU =
+        (act: addOutput('act', width: 2), data: addOutput('data', width: 8));
 
     final alpha = addInternal(name: 'alpha', width: 8);
     final omega = addInternal(name: 'omega', width: 8);
@@ -68,6 +79,9 @@ class SocketArrayUnit extends Module {
       toRFU.write.assign(Const(0)),
       toLSU.act
           .assign(Const(LoadStoreUnit.actcode.none, width: toLSU.act.width)),
+      toALU.act.assign(
+        Const(ArithmeticLogicUnit.actcode.none, width: toALU.act.width),
+      ),
       If(
         // asm: aux.nop (if condition is false)
         alpha
@@ -158,6 +172,17 @@ class SocketArrayUnit extends Module {
                           toRFU.address.assign(alpha.part(6, 0)),
                           toRFU.inputData
                               .assign(fromLSU.targetData.part(15, 8)),
+                          toRFU.write.assign(Const(1))
+                        ],
+                      ),
+                      // asm: <rf.r0-rf.r127> alu.result
+                      Iff(
+                        omega.eq(
+                          Const(index.alu.result, width: omega.width),
+                        ),
+                        then: [
+                          toRFU.address.assign(alpha.part(6, 0)),
+                          toRFU.inputData.assign(fromALU.result),
                           toRFU.write.assign(Const(1))
                         ],
                       )
@@ -337,6 +362,63 @@ class SocketArrayUnit extends Module {
                             orElse: [illegalInstruction.assign(Const(1))],
                           )
                         ],
+                      ),
+                      // asm: alu.operand.a <rf.r0-rf.r127>
+                      Iff(
+                        alpha.eq(
+                          Const(index.alu.operand.a, width: alpha.width),
+                        ),
+                        then: [
+                          toRFU.address.assign(omega.part(6, 0)),
+                          toALU.data.assign(fromRFU.outputData),
+                          toALU.act.assign(
+                            Const(
+                              ArithmeticLogicUnit.actcode.setOperand.a,
+                              width: toALU.act.width,
+                            ),
+                          )
+                        ],
+                      ),
+                      // asm: alu.operand.b <rf.r0-rf.r127>
+                      Iff(
+                        alpha.eq(
+                          Const(index.alu.operand.b, width: alpha.width),
+                        ),
+                        then: [
+                          toRFU.address.assign(omega.part(6, 0)),
+                          toALU.data.assign(fromRFU.outputData),
+                          toALU.act.assign(
+                            Const(
+                              ArithmeticLogicUnit.actcode.setOperand.b,
+                              width: toALU.act.width,
+                            ),
+                          )
+                        ],
+                      ),
+                      // asm: alu.op <rf.r0-rf.r127>
+                      Iff(
+                        alpha.eq(Const(index.alu.op, width: alpha.width)),
+                        then: [
+                          toRFU.address.assign(omega.part(6, 0)),
+                          If(
+                            fromRFU.outputData.lte(
+                              Const(
+                                ArithmeticLogicUnit.opcode.sub,
+                                width: fromRFU.outputData.width,
+                              ),
+                            ),
+                            then: [
+                              toALU.data.assign(fromRFU.outputData),
+                              toALU.act.assign(
+                                Const(
+                                  ArithmeticLogicUnit.actcode.operate,
+                                  width: toALU.act.width,
+                                ),
+                              )
+                            ],
+                            orElse: [illegalInstruction.assign(Const(1))],
+                          )
+                        ],
                       )
                     ],
                     orElse: [illegalInstruction.assign(Const(1))],
@@ -356,6 +438,7 @@ class SocketArrayUnit extends Module {
   late final ({Var act, Var data}) toCFU;
   late final ({Var write, Var address, Var inputData}) toRFU;
   late final ({Var act, Var data}) toLSU;
+  late final ({Var act, Var data}) toALU;
 
   static const index = (
     // auxiliary
