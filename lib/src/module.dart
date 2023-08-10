@@ -304,6 +304,19 @@ abstract class Module {
             auxiliaries
               ..clear()
               ..addAll(auxiliaryDeclarations);
+          } else if (procedure is SyncSequential) {
+            final auxiliaryDeclarations = <String>[];
+            final auxiliaryAssignments = <String>[];
+            for (final auxiliary in auxiliaries) {
+              final temp = auxiliary.split(' = ');
+              auxiliaryDeclarations.add('${temp.first};\n');
+              final temp2 = temp.first.split(' ').last;
+              auxiliaryAssignments.add('  always_comb $temp2 = ${temp.last}\n');
+            }
+            auxiliaries
+              ..clear()
+              ..addAll(auxiliaryDeclarations)
+              ..addAll(auxiliaryAssignments);
           }
           return (basics: basics, auxiliaries: auxiliaries);
         }
