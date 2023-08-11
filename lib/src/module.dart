@@ -220,7 +220,7 @@ abstract class Module {
             final name = '_part${partCounter++}';
             basic = '$name[${varia.parameters[0]}:${varia.parameters[1]}]';
             final String width;
-            if (varia.width == 1) {
+            if (varia.drivers[0].width == 1) {
               width = ' ';
             } else {
               width = ' [${varia.drivers[0].width - 1}:0] ';
