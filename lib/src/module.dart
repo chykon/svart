@@ -164,6 +164,8 @@ abstract class Module {
     var partCounter = 0;
 
     String parseProcedure(Procedure procedure) {
+      var bypassPartSelect = false;
+
       ({String basic, List<String> auxiliaries}) parseVaria(Var varia) {
         late final String basic;
         final auxiliaries = <String>[];
@@ -229,6 +231,28 @@ abstract class Module {
               ...parsedVaria.auxiliaries,
               '  logic$width$name = ${parsedVaria.basic};'
             ]);
+            if (bypassPartSelect) {
+              final auxiliaryDeclarations = <String>[];
+              final auxiliaryAssignments = <String>[];
+              for (final auxiliary in auxiliaries) {
+                final temp = auxiliary.split(' = ');
+                auxiliaryDeclarations.add('${temp.first};\n');
+                final temp2 = temp.first.split(' ').last;
+                auxiliaryAssignments
+                    .add('  always_comb $temp2 = ${temp.last}\n');
+              }
+              auxiliaries
+                ..clear()
+                ..addAll(() {
+                  final auxiliaries = <String>[];
+                  for (var i = 0; i < auxiliaryDeclarations.length; ++i) {
+                    auxiliaries
+                      ..add(auxiliaryDeclarations[i])
+                      ..add(auxiliaryAssignments[i]);
+                  }
+                  return auxiliaries;
+                }());
+            }
           case Operation.cat:
             final parsedVaria0 = parseVaria(varia.drivers[0]);
             final parsedVaria1 = parseVaria(varia.drivers[1]);
@@ -329,7 +353,9 @@ abstract class Module {
         }
 
         ({String basic, List<String> auxiliaries}) parseIf(If conditional) {
+          bypassPartSelect = true;
           final parsedVaria = parseVaria(conditional.condition);
+          bypassPartSelect = false;
           final auxiliaries = parsedVaria.auxiliaries;
           final thenActions = <String>[];
           for (final thenAction in conditional.thenActions) {
@@ -361,7 +387,9 @@ abstract class Module {
           final iffs = <String>[];
           for (var i = 0; i < when.iffs.length; ++i) {
             final iff = when.iffs[i];
+            bypassPartSelect = true;
             final parsedVaria = parseVaria(iff.condition);
+            bypassPartSelect = false;
             final String begin;
             if (i == 0) {
               begin = 'if (${parsedVaria.basic}) begin\n';
