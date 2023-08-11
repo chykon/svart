@@ -315,8 +315,15 @@ abstract class Module {
             }
             auxiliaries
               ..clear()
-              ..addAll(auxiliaryDeclarations)
-              ..addAll(auxiliaryAssignments);
+              ..addAll(() {
+                final auxiliaries = <String>[];
+                for (var i = 0; i < auxiliaryDeclarations.length; ++i) {
+                  auxiliaries
+                    ..add(auxiliaryDeclarations[i])
+                    ..add(auxiliaryAssignments[i]);
+                }
+                return auxiliaries;
+              }());
           }
           return (basics: basics, auxiliaries: auxiliaries);
         }
