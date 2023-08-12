@@ -40,7 +40,7 @@ jobs:
       - name: Install Icarus Verilog
         run: |
           sudo apt-get update
-          apt-get install iverilog
+          sudo apt-get install iverilog
         shell: bash
 
       - name: Run project tests
