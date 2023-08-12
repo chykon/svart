@@ -519,7 +519,7 @@ abstract class Module {
     }
 
     final String ports;
-    if (outputs.isNotEmpty) {
+    if (inputs.isNotEmpty || outputs.isNotEmpty) {
       ports = '${[...inputs, ...outputs].join(',')}\n';
     } else {
       ports = '';
