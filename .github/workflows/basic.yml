@@ -37,6 +37,12 @@ jobs:
         run: dart analyze --fatal-infos
         shell: bash
 
+      - name: Install Icarus Verilog
+        run: |
+          apt-get update
+          apt-get install iverilog
+        shell: bash
+
       - name: Run project tests
         run: dart test --test-randomize-ordering-seed=random
         shell: bash
