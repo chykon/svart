@@ -15,3 +15,18 @@ jobs:
     name: Basic Checks
     timeout-minutes: 30
     runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dart-lang/setup-dart@v1
+
+      - run: dart pub get
+        shell: bash
+
+      - run: dart format --output=none --set-exit-if-changed .
+        shell: bash
+
+      - run: dart analyze --fatal-infos
+        shell: bash
+
+      - run: dart test --test-randomize-ordering-seed=random
+        shell: bash
