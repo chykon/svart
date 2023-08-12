@@ -1,7 +1,7 @@
 import 'package:svart/svart.dart';
 
 class ArithmeticLogicUnit extends Module {
-  ArithmeticLogicUnit(Var clock, Var act, Var data)
+  ArithmeticLogicUnit(Var clock, Var act, Var data, {super.instanceName})
       : super(definitionName: 'arithmetic_logic_unit') {
     clock = addInput('clock', clock);
     act = addInput('act', act, width: 2);
@@ -54,27 +54,51 @@ class ArithmeticLogicUnit extends Module {
                     ),
                     Iff(
                       op.eq(Const(opcode.eq, width: op.width)),
-                      then: [result.assign(operandA.eq(operandB))],
+                      then: [
+                        result.assign(
+                          Const(0, width: 7).cat(operandA.eq(operandB)),
+                        )
+                      ],
                     ),
                     Iff(
                       op.eq(Const(opcode.neq, width: op.width)),
-                      then: [result.assign(operandA.neq(operandB))],
+                      then: [
+                        result.assign(
+                          Const(0, width: 7).cat(operandA.neq(operandB)),
+                        )
+                      ],
                     ),
                     Iff(
                       op.eq(Const(opcode.lt, width: op.width)),
-                      then: [result.assign(operandA.lt(operandB))],
+                      then: [
+                        result.assign(
+                          Const(0, width: 7).cat(operandA.lt(operandB)),
+                        )
+                      ],
                     ),
                     Iff(
                       op.eq(Const(opcode.gt, width: op.width)),
-                      then: [result.assign(operandA.gt(operandB))],
+                      then: [
+                        result.assign(
+                          Const(0, width: 7).cat(operandA.gt(operandB)),
+                        )
+                      ],
                     ),
                     Iff(
                       op.eq(Const(opcode.lte, width: op.width)),
-                      then: [result.assign(operandA.lte(operandB))],
+                      then: [
+                        result.assign(
+                          Const(0, width: 7).cat(operandA.lte(operandB)),
+                        )
+                      ],
                     ),
                     Iff(
                       op.eq(Const(opcode.gte, width: op.width)),
-                      then: [result.assign(operandA.gte(operandB))],
+                      then: [
+                        result.assign(
+                          Const(0, width: 7).cat(operandA.gte(operandB)),
+                        )
+                      ],
                     ),
                     Iff(
                       op.eq(Const(opcode.add, width: op.width)),

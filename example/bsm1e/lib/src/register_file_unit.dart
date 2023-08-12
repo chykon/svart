@@ -6,15 +6,18 @@ class RegisterFileUnit extends Module {
     Var clock,
     Var write,
     Var address,
-    Var inputData,
-  ) : super(definitionName: 'register_file_unit') {
+    Var inputData, {
+    int actualRegisterAddressSpace = 7,
+    super.instanceName,
+  }) : super(definitionName: 'register_file_unit') {
     clock = addInput('clock', clock);
     write = addInput('write', write);
     address = addInput('address', address, width: 7);
     inputData = addInput('input_data', inputData, width: 8);
     outputData = addOutput('output_data', width: 8);
 
-    final registers = List.generate(pow(2, address.width).toInt(), (index) {
+    final registers =
+        List.generate(pow(2, actualRegisterAddressSpace).toInt(), (index) {
       return addInternal(name: 'register_$index', width: 8);
     });
 

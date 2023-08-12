@@ -11,59 +11,67 @@ class SocketArrayUnit extends Module {
     ({Var outputData}) fromRFU, // Register File Unit
     ({Var targetData}) fromLSU, // Load-Store Unit
     ({Var result}) fromALU, // Arithmetic Logic Unit
-  ) : super(definitionName: 'socket_array_unit') {
+    {
+    super.instanceName,
+  }) : super(definitionName: 'socket_array_unit') {
     instruction = addInput('instruction', instruction, width: 16);
     fromLU = (
       outputValue: addInput(
-        fromLU.outputValue.name,
+        'from_lu_output_value',
         fromLU.outputValue,
-        width: fromLU.outputValue.width,
+        width: 8,
       )
     );
     fromCFU = (
       branchAddress: addInput(
-        fromCFU.branchAddress.name,
+        'from_cfu_branch_address',
         fromCFU.branchAddress,
-        width: fromCFU.branchAddress.width,
+        width: 15,
       )
     );
     fromRFU = (
       outputData: addInput(
-        fromRFU.outputData.name,
+        'from_rfu_output_data',
         fromRFU.outputData,
-        width: fromRFU.outputData.width,
+        width: 8,
       )
     );
     fromLSU = (
       targetData: addInput(
-        fromLSU.targetData.name,
+        'from_lsu_target_data',
         fromLSU.targetData,
-        width: fromLSU.targetData.width,
+        width: 16,
       )
     );
     fromALU = (
       result: addInput(
-        fromALU.result.name,
+        'from_alu_result',
         fromALU.result,
-        width: fromALU.result.width,
+        width: 8,
       )
     );
     illegalInstruction = addOutput('illegal_instruction');
     toLU = (
-      write: addOutput('write'),
-      inputValue: addOutput('input_value', width: 8)
+      write: addOutput('to_lu_write'),
+      inputValue: addOutput('to_lu_input_value', width: 8)
     );
-    toCFU =
-        (act: addOutput('act', width: 3), data: addOutput('data', width: 8));
+    toCFU = (
+      act: addOutput('to_cfu_act', width: 3),
+      data: addOutput('to_cfu_data', width: 8)
+    );
     toRFU = (
-      write: addOutput('write'),
-      address: addOutput('address', width: 7),
-      inputData: addOutput('input_data', width: 8)
+      write: addOutput('to_rfu_write'),
+      address: addOutput('to_rfu_address', width: 7),
+      inputData: addOutput('to_rfu_input_data', width: 8)
     );
-    toLSU =
-        (act: addOutput('act', width: 3), data: addOutput('data', width: 8));
-    toALU =
-        (act: addOutput('act', width: 2), data: addOutput('data', width: 8));
+    toLSU = (
+      act: addOutput('to_lsu_act', width: 3),
+      data: addOutput('to_lsu_data', width: 8)
+    );
+    toALU = (
+      act: addOutput('to_alu_act', width: 2),
+      data: addOutput('to_alu_data', width: 8)
+    );
 
     final alpha = addInternal(name: 'alpha', width: 8);
     final omega = addInternal(name: 'omega', width: 8);

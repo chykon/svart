@@ -6,8 +6,9 @@ class LoadStoreUnit extends Module {
     Var act,
     Var data,
     Var resetMemoryAccess,
-    Var memoryData,
-  ) : super(definitionName: 'load_store_unit') {
+    Var memoryData, {
+    super.instanceName,
+  }) : super(definitionName: 'load_store_unit') {
     clock = addInput('clock', clock);
     act = addInput('act', act, width: 3);
     data = addInput('data', data, width: 8);
@@ -73,8 +74,9 @@ class LoadStoreUnit extends Module {
                       op.eq(Const(opcode.load.byte, width: op.width)),
                       then: [
                         memoryAccess.load.byte.assign(Const(1)),
-                        targetData
-                            .assign(targetData.part(15, 8).cat(memoryData))
+                        targetData.assign(
+                          targetData.part(15, 8).cat(memoryData.part(7, 0)),
+                        )
                       ],
                     ),
                     Iff(

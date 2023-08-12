@@ -5,8 +5,9 @@ class InstructionFetchUnit extends Module {
     Var clock,
     Var jump,
     Var jumpAddress,
-    Var next,
-  ) : super(definitionName: 'instruction_fetch_unit') {
+    Var next, {
+    super.instanceName,
+  }) : super(definitionName: 'instruction_fetch_unit') {
     clock = addInput('clock', clock);
     jump = addInput('jump', jump);
     jumpAddress = addInput('jump_address', jumpAddress, width: 15);

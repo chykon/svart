@@ -6,8 +6,9 @@ class ControlFlowUnit extends Module {
     Var act,
     Var data,
     Var resetBranch,
-    Var currentAddress,
-  ) : super(definitionName: 'control_flow_unit') {
+    Var currentAddress, {
+    super.instanceName,
+  }) : super(definitionName: 'control_flow_unit') {
     clock = addInput('clock', clock);
     act = addInput('act', act, width: 3);
     data = addInput('data', data, width: 8);

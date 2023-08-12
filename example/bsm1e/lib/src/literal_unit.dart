@@ -1,7 +1,7 @@
 import 'package:svart/svart.dart';
 
 class LiteralUnit extends Module {
-  LiteralUnit(Var clock, Var write, Var inputValue)
+  LiteralUnit(Var clock, Var write, Var inputValue, {super.instanceName})
       : super(definitionName: 'literal_unit') {
     clock = addInput('clock', clock);
     write = addInput('write', write);

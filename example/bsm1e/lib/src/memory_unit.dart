@@ -7,8 +7,10 @@ class MemoryUnit extends Module {
     Var write,
     Var selectByte,
     Var address,
-    Var inputData,
-  ) : super(definitionName: 'memory_unit') {
+    Var inputData, {
+    int actualAddressSpace = 16,
+    super.instanceName,
+  }) : super(definitionName: 'memory_unit') {
     clock = addInput('clock', clock);
     write = addInput('write', write);
     selectByte = addInput('select_byte', selectByte);
@@ -16,7 +18,7 @@ class MemoryUnit extends Module {
     inputData = addInput('input_data', inputData, width: 16);
     outputData = addOutput('output_data', width: 16);
 
-    final memory = List.generate(pow(2, address.width).toInt(), (index) {
+    final memory = List.generate(pow(2, actualAddressSpace).toInt(), (index) {
       return addInternal(name: 'memo_$index', width: 8);
     });
 
