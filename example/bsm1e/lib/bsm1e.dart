@@ -19,85 +19,93 @@ class BSM1E extends Module {
 
     final alu = (
       to: (
-        act: addInternal(name: 'act', width: 2),
-        data: addInternal(name: 'data', width: 8)
+        act: addInternal(name: 'to_alu_act', width: 2),
+        data: addInternal(name: 'to_alu_data', width: 8)
       ),
-      from: (result: addInternal(name: 'result', width: 8))
+      from: (result: addInternal(name: 'from_alu_result', width: 8))
     );
     final cfu = (
       to: (
-        act: addInternal(name: 'act', width: 3),
-        data: addInternal(name: 'data', width: 8),
-        resetBranch: addInternal(name: 'reset_branch'),
-        currentAddress: addInternal(name: 'current_address', width: 15)
+        act: addInternal(name: 'to_cfu_act', width: 3),
+        data: addInternal(name: 'to_cfu_data', width: 8),
+        resetBranch: addInternal(name: 'to_cfu_reset_branch'),
+        currentAddress: addInternal(name: 'to_cfu_current_address', width: 15)
       ),
       from: (
-        branch: addInternal(name: 'branch'),
-        branchAddress: addInternal(name: 'branch_address', width: 15)
+        branch: addInternal(name: 'from_cfu_branch'),
+        branchAddress: addInternal(name: 'from_cfu_branch_address', width: 15)
       )
     );
     final ifu = (
       to: (
-        jump: addInternal(name: 'jump'),
-        jumpAddress: addInternal(name: 'jump_address', width: 15),
-        next: addInternal(name: 'next')
+        jump: addInternal(name: 'to_ifu_jump'),
+        jumpAddress: addInternal(name: 'to_ifu_jump_address', width: 15),
+        next: addInternal(name: 'to_ifu_next')
       ),
-      from: (currentAddress: addInternal(name: 'current_address', width: 15))
+      from: (
+        currentAddress: addInternal(name: 'from_ifu_current_address', width: 15)
+      )
     );
     final lu = (
       to: (
-        write: addInternal(name: 'write'),
-        inputValue: addInternal(name: 'input_value', width: 8)
+        write: addInternal(name: 'to_lu_write'),
+        inputValue: addInternal(name: 'to_lu_input_value', width: 8)
       ),
-      from: (outputValue: addInternal(name: 'output_value', width: 8))
+      from: (outputValue: addInternal(name: 'from_lu_output_value', width: 8))
     );
     final lsu = (
       to: (
-        act: addInternal(name: 'act', width: 3),
-        data: addInternal(name: 'data', width: 8),
-        resetMemoryAccess: addInternal(name: 'reset_branch'),
-        memoryData: addInternal(name: 'current_address', width: 15)
+        act: addInternal(name: 'to_lsu_act', width: 3),
+        data: addInternal(name: 'to_lsu_data', width: 8),
+        resetMemoryAccess: addInternal(name: 'to_lsu_reset_memory_access'),
+        memoryData: addInternal(name: 'to_lsu_memory_data', width: 16)
       ),
       from: (
         memoryAccess: (
           load: (
-            byte: addInternal(name: 'memory_access_load_byte'),
-            halfword: addInternal(name: 'memory_access_load_halfword')
+            byte: addInternal(name: 'from_lsu_memory_access_load_byte'),
+            halfword: addInternal(name: 'from_lsu_memory_access_load_halfword')
           ),
           store: (
-            byte: addInternal(name: 'memory_access_store_byte'),
-            halfword: addInternal(name: 'memory_access_store_halfword')
+            byte: addInternal(name: 'from_lsu_memory_access_store_byte'),
+            halfword: addInternal(name: 'from_lsu_memory_access_store_halfword')
           )
         ),
-        targetAddress: addInternal(name: 'target_address', width: 16),
-        targetData: addInternal(name: 'target_data', width: 16)
+        targetAddress: addInternal(name: 'from_lsu_target_address', width: 16),
+        targetData: addInternal(name: 'from_lsu_target_data', width: 16)
       )
     );
     final mu = (
       to: (
-        write: addInternal(name: 'write'),
-        selectByte: addInternal(name: 'select_byte'),
-        address: addInternal(name: 'address', width: 16),
-        inputData: addInternal(name: 'input_data', width: 16)
+        write: addInternal(name: 'to_mu_write'),
+        selectByte: addInternal(name: 'to_mu_select_byte'),
+        address: addInternal(name: 'to_mu_address', width: 16),
+        inputData: addInternal(name: 'to_mu_input_data', width: 16)
       ),
-      from: (outputData: addInternal(name: 'output_data', width: 16))
+      from: (outputData: addInternal(name: 'from_mu_output_data', width: 16))
     );
     final rfu = (
       to: (
-        write: addInternal(name: 'write'),
-        address: addInternal(name: 'address', width: 7),
-        inputData: addInternal(name: 'input_data', width: 8)
+        write: addInternal(name: 'to_ifu_write'),
+        address: addInternal(name: 'to_ifu_address', width: 7),
+        inputData: addInternal(name: 'to_ifu_input_data', width: 8)
       ),
-      from: (outputData: addInternal(name: 'output_data', width: 8))
+      from: (outputData: addInternal(name: 'from_ifu_output_data', width: 8))
     );
     final sau = (
-      to: (instruction: addInternal(name: 'instruction', width: 16),),
-      from: (illegalInstruction: addInternal(name: 'illegal_instruction'))
+      to: (instruction: addInternal(name: 'to_sau_instruction', width: 16),),
+      from: (
+        illegalInstruction: addInternal(name: 'from_sau_illegal_instruction')
+      )
     );
 
     addSubmodule(
-      ArithmeticLogicUnit(clock, alu.to.act, alu.to.data)
-        ..result.to(alu.from.result),
+      ArithmeticLogicUnit(
+        clock,
+        alu.to.act,
+        alu.to.data,
+        instanceName: 'alu_instance',
+      )..result.to(alu.from.result),
     );
     addSubmodule(
       ControlFlowUnit(
@@ -106,17 +114,27 @@ class BSM1E extends Module {
         cfu.to.data,
         cfu.to.resetBranch,
         cfu.to.currentAddress,
+        instanceName: 'cfu_instance',
       )
         ..branch.to(cfu.from.branch)
         ..branchAddress.to(cfu.from.branchAddress),
     );
     addSubmodule(
-      InstructionFetchUnit(clock, ifu.to.jump, ifu.to.jumpAddress, ifu.to.next)
-        ..currentAddress.to(ifu.from.currentAddress),
+      InstructionFetchUnit(
+        clock,
+        ifu.to.jump,
+        ifu.to.jumpAddress,
+        ifu.to.next,
+        instanceName: 'ifu_instance',
+      )..currentAddress.to(ifu.from.currentAddress),
     );
     addSubmodule(
-      LiteralUnit(clock, lu.to.write, lu.to.inputValue)
-        ..outputValue.to(lu.from.outputValue),
+      LiteralUnit(
+        clock,
+        lu.to.write,
+        lu.to.inputValue,
+        instanceName: 'lu_instance',
+      )..outputValue.to(lu.from.outputValue),
     );
     addSubmodule(
       LoadStoreUnit(
@@ -125,6 +143,7 @@ class BSM1E extends Module {
         lsu.to.data,
         lsu.to.resetMemoryAccess,
         lsu.to.memoryData,
+        instanceName: 'lsu_instance',
       )
         ..memoryAccess.load.byte.to(lsu.from.memoryAccess.load.byte)
         ..memoryAccess.load.halfword.to(lsu.from.memoryAccess.load.halfword)
@@ -140,11 +159,21 @@ class BSM1E extends Module {
         mu.to.selectByte,
         mu.to.address,
         mu.to.inputData,
+        // We will have to limit ourselves to a 10-bit address space,
+        // since simulating a full address space with such an implementation
+        // requires a lot of memory.
+        actualAddressSpace: 10,
+        instanceName: 'mu_instance',
       )..outputData.to(mu.from.outputData),
     );
     addSubmodule(
-      RegisterFileUnit(clock, rfu.to.write, rfu.to.address, rfu.to.inputData)
-        ..outputData.to(rfu.from.outputData),
+      RegisterFileUnit(
+        clock,
+        rfu.to.write,
+        rfu.to.address,
+        rfu.to.inputData,
+        instanceName: 'rfu_instance',
+      )..outputData.to(rfu.from.outputData),
     );
     addSubmodule(
       SocketArrayUnit(
@@ -154,6 +183,7 @@ class BSM1E extends Module {
         rfu.from,
         (targetData: lsu.from.targetData),
         alu.from,
+        instanceName: 'sau_instance',
       )
         ..illegalInstruction.to(sau.from.illegalInstruction)
         ..toLU.write.to(lu.to.write)
@@ -176,13 +206,19 @@ class BSM1E extends Module {
       ifu.to.next.assign(Const(0)),
       lsu.to.resetMemoryAccess.assign(Const(0)),
       mu.to.write.assign(Const(0)),
-      When([
-        Iff(nextState.eq(Const(_state.initial)), then: [
+      When(
+        [
+          Iff(
+            nextState.eq(Const(_state.initial)),
+            then: [
+              // ...
+            ],
+          )
+        ],
+        orElse: [
           // ...
-        ])
-      ], orElse: [
-        // ...
-      ])
+        ],
+      )
     ]);
 
     addSyncSequential(PosEdge(clock), [
@@ -196,86 +232,3 @@ class BSM1E extends Module {
 
   static const _state = (initial: 0);
 }
-
-/*
-    final states = [
-      State<_State>(_State.initial, events: {
-        Const(1): _State.premainA,
-      }, actions: [
-        mcu.enable < 0,
-        ifu.enable < 1,
-        ifu.jump < 1,
-        ifu.jumpAddress < _startAddress,
-        sacu.enable < 0,
-      ]),
-      State<_State>(_State.premainA, events: {
-        Const(1): _State.premainB,
-      }, actions: [
-        mcu.enable < 1,
-        mcu.write < 0,
-        mcu.selectByte < 0,
-        mcu.address < ifu.mcuAddress,
-        ifu.enable < 1,
-        ifu.jump < 0,
-        sacu.enable < 0,
-        cfu.block < 0,
-      ]),
-      State<_State>(_State.premainB, events: {
-        Const(1): _State.main,
-      }, actions: [
-        mcu.enable < 1,
-        mcu.write < 0,
-        mcu.selectByte < 0,
-        mcu.address < ifu.mcuAddress,
-        ifu.enable < 1,
-        ifu.jump < 0,
-        sacu.enable < 0,
-        cfu.block < 0,
-      ]),
-      State<_State>(_State.main, events: {
-        cfu.branch: _State.branch,
-        sacu.illegalInstruction: _State.illegalInstruction,
-      }, actions: [
-        mcu.enable < 1,
-        mcu.write < 0,
-        mcu.selectByte < 0,
-        mcu.address < ifu.mcuAddress,
-        ifu.enable < 1,
-        ifu.jump < 0,
-        sacu.enable < 1,
-        cfu.block < 0,
-      ]),
-      State<_State>(_State.branch, events: {
-        Const(1): _State.premainA,
-      }, actions: [
-        mcu.enable < 1,
-        mcu.write < 0,
-        mcu.selectByte < 0,
-        mcu.address < ifu.mcuAddress,
-        ifu.enable < 1,
-        ifu.jump < 1,
-        ifu.jumpAddress < [cfu.addressHighByte, cfu.addressLowByte].swizzle(),
-        sacu.enable < 1, // branch delay slot
-        cfu.block < 0,
-      ]),
-      State<_State>(_State.illegalInstruction, events: {}, actions: [
-        mcu.enable < 0,
-        ifu.enable < 0,
-        sacu.enable < 0,
-        cfu.block < 1,
-      ])
-    ];
-
-    StateMachine<_State>(intf.clock, intf.reset, _State.initial, states);
-  }
-
-  late final BSM1DInterface intf;
-  late final List<Logic> memory;
-  late final List<Logic> registers;
-
-  static const _startAddress = 0x0000;
-}
-
-enum _State { initial, premainA, premainB, main, branch, illegalInstruction }
-
-*/
