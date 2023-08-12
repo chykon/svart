@@ -39,7 +39,7 @@ jobs:
 
       - name: Install Icarus Verilog
         run: |
-          apt-get update
+          sudo apt-get update
           apt-get install iverilog
         shell: bash
 
