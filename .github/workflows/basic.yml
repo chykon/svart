@@ -19,17 +19,24 @@ jobs:
     timeout-minutes: 30
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v3
-      - uses: dart-lang/setup-dart@v1
+      - name: Checkout
+        uses: actions/checkout@v3
 
-      - run: dart pub get
+      - name: Setup Dart SDK
+        uses: dart-lang/setup-dart@v1
+
+      - name: Get project dependencies
+        run: dart pub get
         shell: bash
 
-      - run: dart format --output=none --set-exit-if-changed .
+      - name: Check project formatting
+        run: dart format --output=none --set-exit-if-changed .
         shell: bash
 
-      - run: dart analyze --fatal-infos
+      - name: Analyze project code
+        run: dart analyze --fatal-infos
         shell: bash
 
-      - run: dart test --test-randomize-ordering-seed=random
+      - name: Run project tests
+        run: dart test --test-randomize-ordering-seed=random
         shell: bash
