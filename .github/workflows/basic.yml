@@ -1,0 +1,47 @@
+name: Basic
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+permissions: {}
+
+jobs:
+  basic-checks:
+    name: Basic Checks
+    permissions:
+      contents: read
+    timeout-minutes: 30
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Dart SDK
+        uses: dart-lang/setup-dart@v1
+
+      - name: Get project dependencies
+        run: dart pub get
+        shell: bash
+
+      - name: Check project formatting
+        run: dart format --output=none --set-exit-if-changed .
+        shell: bash
+
+      - name: Analyze project code
+        run: dart analyze --fatal-infos
+        shell: bash
+
+      - name: Install Icarus Verilog
+        run: |
+          sudo apt-get update
+          sudo apt-get install iverilog
+        shell: bash
+
+      - name: Run project tests
+        run: dart test --test-randomize-ordering-seed=random
+        shell: bash
