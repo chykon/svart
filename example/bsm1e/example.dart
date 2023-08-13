@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:svart/svart.dart';
-import '../src/bsm1e.dart';
+import 'src/bsm1e.dart';
 
 class BSM1ETestbench extends Module {
   BSM1ETestbench({String vcdFileName = 'dump.vcd'})
