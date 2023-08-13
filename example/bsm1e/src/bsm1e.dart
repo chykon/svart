@@ -1,13 +1,13 @@
 import 'package:svart/svart.dart';
 
-import 'src/arithmetic_logic_unit.dart';
-import 'src/control_flow_unit.dart';
-import 'src/instruction_fetch_unit.dart';
-import 'src/literal_unit.dart';
-import 'src/load_store_unit.dart';
-import 'src/memory_unit.dart';
-import 'src/register_file_unit.dart';
-import 'src/socket_array_unit.dart';
+import 'units/arithmetic_logic_unit.dart';
+import 'units/control_flow_unit.dart';
+import 'units/instruction_fetch_unit.dart';
+import 'units/literal_unit.dart';
+import 'units/load_store_unit.dart';
+import 'units/memory_unit.dart';
+import 'units/register_file_unit.dart';
+import 'units/socket_array_unit.dart';
 
 class BSM1E extends Module {
   BSM1E(Var clock, Var reset) : super(definitionName: 'bsm1e') {
