@@ -1,8 +1,8 @@
 import 'dart:io';
 import 'dart:math';
 import 'package:test/test.dart';
-import '../example/counter4bit.dart' as counter4bit;
-import '../example/counter4bit_testbench.dart' as counter4bit_testbench;
+import '../example/example.dart' as counter4bit;
+import '../example/example_testbench.dart' as counter4bit_testbench;
 import '../example/mux2to1.dart' as mux2to1;
 import '../example/mux2to1_testbench.dart' as mux2to1_testbench;
 import '../example/utf8decoder.dart' as utf8decoder;

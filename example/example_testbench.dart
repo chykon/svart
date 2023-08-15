@@ -3,7 +3,7 @@
 import 'dart:io';
 import 'dart:math';
 import 'package:svart/svart.dart';
-import 'counter4bit.dart';
+import 'example.dart';
 
 // We extend the base class `Module`. This is our main block
 // for building circuits.
