@@ -1,3 +1,19 @@
 {
-  "image": "mcr.microsoft.com/devcontainers/universal:2-focal"
+  "image": "mcr.microsoft.com/devcontainers/universal:2-focal",
+  "updateContentCommand": "snap install flutter",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "Dart-Code.dart-code",
+        "CHIPSAlliance.verible",
+        "eirikpre.systemverilog"
+      ]
+    },
+    "codespaces": {
+      "openFiles": [
+        "example/example.dart",
+        "README.md"
+      ]
+    }
+  }
 }
