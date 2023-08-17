@@ -1,6 +1,6 @@
 {
   "image": "mcr.microsoft.com/devcontainers/universal:2-focal",
-  "updateContentCommand": "snap install flutter",
+  "updateContentCommand": "tool/devcontainer/setup.sh",
   "customizations": {
     "vscode": {
       "extensions": [
