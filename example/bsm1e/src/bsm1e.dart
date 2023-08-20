@@ -14,8 +14,8 @@ class BSM1E extends Module {
     clock = addInput('clock', clock);
     reset = addInput('reset', reset);
 
-    final currentState = addInternal(name: 'current_state');
-    final nextState = addInternal(name: 'next_state');
+    final currentState = addInternal(name: 'current_state', width: 3);
+    final nextState = addInternal(name: 'next_state', width: 3);
 
     final alu = (
       to: (
@@ -86,14 +86,17 @@ class BSM1E extends Module {
     );
     final rfu = (
       to: (
-        write: addInternal(name: 'to_ifu_write'),
-        address: addInternal(name: 'to_ifu_address', width: 7),
-        inputData: addInternal(name: 'to_ifu_input_data', width: 8)
+        write: addInternal(name: 'to_rfu_write'),
+        address: addInternal(name: 'to_rfu_address', width: 7),
+        inputData: addInternal(name: 'to_rfu_input_data', width: 8)
       ),
-      from: (outputData: addInternal(name: 'from_ifu_output_data', width: 8))
+      from: (outputData: addInternal(name: 'from_rfu_output_data', width: 8))
     );
     final sau = (
-      to: (instruction: addInternal(name: 'to_sau_instruction', width: 16),),
+      to: (
+        instruction: addInternal(name: 'to_sau_instruction', width: 16),
+        enable: addInternal(name: 'to_sau_enable')
+      ),
       from: (
         illegalInstruction: addInternal(name: 'from_sau_illegal_instruction')
       )
@@ -159,10 +162,10 @@ class BSM1E extends Module {
         mu.to.selectByte,
         mu.to.address,
         mu.to.inputData,
-        // We will have to limit ourselves to a 10-bit address space,
+        // We will have to limit ourselves to a 5-bit address space,
         // since simulating a full address space with such an implementation
         // requires a lot of memory.
-        actualAddressSpace: 10,
+        actualAddressSpace: 5,
         instanceName: 'mu_instance',
       )..outputData.to(mu.from.outputData),
     );
@@ -173,11 +176,13 @@ class BSM1E extends Module {
         rfu.to.address,
         rfu.to.inputData,
         instanceName: 'rfu_instance',
+        actualRegisterAddressSpace: 2,
       )..outputData.to(rfu.from.outputData),
     );
     addSubmodule(
       SocketArrayUnit(
         sau.to.instruction,
+        sau.to.enable,
         lu.from,
         (branchAddress: cfu.from.branchAddress),
         rfu.from,
@@ -206,17 +211,64 @@ class BSM1E extends Module {
       ifu.to.next.assign(Const(0)),
       lsu.to.resetMemoryAccess.assign(Const(0)),
       mu.to.write.assign(Const(0)),
+      sau.to.enable.assign(Const(0)),
       When(
         [
           Iff(
-            nextState.eq(Const(_state.initial)),
+            nextState.eq(Const(_state.initial, width: nextState.width)),
             then: [
-              // ...
+              cfu.to.resetBranch.assign(Const(1)),
+              ifu.to.jumpAddress.assign(Const(_startAddress, width: 15)),
+              ifu.to.jump.assign(Const(1)),
+              lsu.to.resetMemoryAccess.assign(Const(1)),
+              nextState.assign(Const(_state.main, width: nextState.width))
+            ],
+          ),
+          Iff(
+            nextState.eq(Const(_state.main, width: nextState.width)),
+            then: [
+              mu.to.address.assign(ifu.from.currentAddress.cat(Const(0))),
+              sau.to.instruction.assign(mu.from.outputData),
+              sau.to.enable.assign(Const(1)),
+              ifu.to.next.assign(Const(1)),
+              When([
+                Iff(
+                  sau.from.illegalInstruction,
+                  then: [
+                    nextState.assign(
+                      Const(_state.illegalInstruction, width: nextState.width),
+                    )
+                  ],
+                ),
+                Iff(
+                  lsu.from.memoryAccess.load.byte,
+                  then: [
+                    sau.to.enable.assign(Const(0)),
+                    ifu.to.next.assign(Const(0)),
+                    mu.to.address.assign(lsu.from.targetAddress),
+                    lsu.to.memoryData.assign(mu.from.outputData),
+                    nextState.assign(Const(_state.load, width: nextState.width))
+                  ],
+                ),
+                Iff(
+                  cfu.from.branch,
+                  then: [
+                    cfu.to.resetBranch.assign(Const(1)),
+                    ifu.to.jumpAddress.assign(cfu.from.branchAddress),
+                    ifu.to.jump.assign(Const(1)),
+                  ],
+                )
+              ])
+            ],
+          ),
+          Iff(
+            nextState.eq(Const(_state.load, width: nextState.width)),
+            then: [
+              lsu.to.memoryData.assign(mu.from.outputData),
+              lsu.to.resetMemoryAccess.assign(Const(1)),
+              nextState.assign(Const(_state.main, width: nextState.width))
             ],
           )
-        ],
-        orElse: [
-          // ...
         ],
       )
     ]);
@@ -224,11 +276,22 @@ class BSM1E extends Module {
     addSyncSequential(PosEdge(clock), [
       If(
         reset,
-        then: [currentState.assign(Const(_state.initial))],
+        then: [
+          currentState.assign(Const(_state.initial, width: currentState.width))
+        ],
         orElse: [currentState.assign(nextState)],
       )
     ]);
   }
 
-  static const _state = (initial: 0);
+  static const _state = (
+    initial: 0,
+    main: 1,
+    branch: 2,
+    load: 3,
+    store: 4,
+    illegalInstruction: 5
+  );
+
+  static const _startAddress = 0x0000;
 }
