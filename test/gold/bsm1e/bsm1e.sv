@@ -802,6 +802,7 @@ module register_file_unit (
   logic [7:0] register_1;
   logic [7:0] register_2;
   logic [7:0] register_3;
+
   always_comb begin
     if ((address) == (7'h0)) begin
       output_data = register_0;
