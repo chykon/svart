@@ -486,3 +486,22 @@ class SocketArrayUnit extends Module {
 
   static const auxOpcode = (illegal: 0, nop: 1);
 }
+
+String main({bool noPrint = false}) {
+  final systemverilog = SocketArrayUnit(
+    Var(width: 16),
+    Var(),
+    (outputValue: Var(width: 8)),
+    (branchAddress: Var(width: 15)),
+    (outputData: Var(width: 8)),
+    (targetData: Var(width: 16)),
+    (result: Var(width: 8)),
+  ).emit();
+
+  if (!noPrint) {
+    // ignore: avoid_print
+    print(systemverilog);
+  }
+
+  return systemverilog;
+}

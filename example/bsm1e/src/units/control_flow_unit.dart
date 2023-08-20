@@ -111,3 +111,20 @@ class ControlFlowUnit extends Module {
     ),
   );
 }
+
+String main({bool noPrint = false}) {
+  final systemverilog = ControlFlowUnit(
+    Var(),
+    Var(width: 3),
+    Var(width: 8),
+    Var(),
+    Var(width: 15),
+  ).emit();
+
+  if (!noPrint) {
+    // ignore: avoid_print
+    print(systemverilog);
+  }
+
+  return systemverilog;
+}

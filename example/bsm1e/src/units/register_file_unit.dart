@@ -47,3 +47,20 @@ class RegisterFileUnit extends Module {
 
   late final Var outputData;
 }
+
+String main({bool noPrint = false}) {
+  final systemverilog = RegisterFileUnit(
+    Var(),
+    Var(),
+    Var(width: 7),
+    Var(width: 8),
+    actualRegisterAddressSpace: 3,
+  ).emit();
+
+  if (!noPrint) {
+    // ignore: avoid_print
+    print(systemverilog);
+  }
+
+  return systemverilog;
+}

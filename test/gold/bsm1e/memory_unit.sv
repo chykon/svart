@@ -15,6 +15,17 @@ module memory_unit (
   logic [7:0] memo_6;
   logic [7:0] memo_7;
 
+  initial begin
+    memo_0 = 8'h1;
+    memo_1 = 8'hFE;
+    memo_2 = 8'h80;
+    memo_3 = 8'h1;
+    memo_4 = 8'h1;
+    memo_5 = 8'h1;
+    memo_6 = 8'h81;
+    memo_7 = 8'h1;
+  end
+
   logic [15:0] _part0;
   always_comb _part0 = address;
   logic [15:0] _part1;

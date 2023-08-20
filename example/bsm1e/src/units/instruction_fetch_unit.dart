@@ -34,3 +34,15 @@ class InstructionFetchUnit extends Module {
 
   late final Var currentAddress;
 }
+
+String main({bool noPrint = false}) {
+  final systemverilog =
+      InstructionFetchUnit(Var(), Var(), Var(width: 15), Var()).emit();
+
+  if (!noPrint) {
+    // ignore: avoid_print
+    print(systemverilog);
+  }
+
+  return systemverilog;
+}

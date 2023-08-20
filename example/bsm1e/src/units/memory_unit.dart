@@ -54,41 +54,58 @@ class MemoryUnit extends Module {
       );
     }
 
-    addInitial([
-      // asm: lit 254
-      memory[0].assign(Const(1, width: 8)),
-      memory[1].assign(Const(254, width: 8)),
-      // asm: rf.r0 lit
-      memory[2].assign(Const(128 + 0, width: 8)),
-      memory[3].assign(Const(1, width: 8)),
-      // asm: lit 1
-      memory[4].assign(Const(1, width: 8)),
-      memory[5].assign(Const(1, width: 8)),
-      // asm: rf.r1 lit
-      memory[6].assign(Const(128 + 1, width: 8)),
-      memory[7].assign(Const(1, width: 8)),
-      // asm: lit 11
-      memory[8].assign(Const(1, width: 8)),
-      memory[9].assign(Const(11, width: 8)),
-      // asm: rf.r2 lit
-      memory[10].assign(Const(128 + 2, width: 8)),
-      memory[11].assign(Const(1, width: 8)),
-      // asm: alu.operand.a rf.r0
-      memory[12].assign(Const(11, width: 8)),
-      memory[13].assign(Const(128 + 0, width: 8)),
-      // asm: alu.operand.b rf.r1
-      memory[14].assign(Const(12, width: 8)),
-      memory[15].assign(Const(128 + 1, width: 8)),
-      // asm: alu.op rf.r2
-      memory[16].assign(Const(14, width: 8)),
-      memory[17].assign(Const(128 + 2, width: 8)),
-      // asm: rf.r3 alu.result
-      memory[18].assign(Const(128 + 3, width: 8)),
-      memory[19].assign(Const(13, width: 8)),
-      // asm: aux.nop
-      memory[20].assign(Const(0, width: 8)),
-      memory[21].assign(Const(1, width: 8)),
-    ]);
+    if (actualAddressSpace == 3) {
+      addInitial([
+        // asm: lit 254
+        memory[0].assign(Const(1, width: 8)),
+        memory[1].assign(Const(254, width: 8)),
+        // asm: rf.r0 lit
+        memory[2].assign(Const(128 + 0, width: 8)),
+        memory[3].assign(Const(1, width: 8)),
+        // asm: lit 1
+        memory[4].assign(Const(1, width: 8)),
+        memory[5].assign(Const(1, width: 8)),
+        // asm: rf.r1 lit
+        memory[6].assign(Const(128 + 1, width: 8)),
+        memory[7].assign(Const(1, width: 8)),
+      ]);
+    } else {
+      addInitial([
+        // asm: lit 254
+        memory[0].assign(Const(1, width: 8)),
+        memory[1].assign(Const(254, width: 8)),
+        // asm: rf.r0 lit
+        memory[2].assign(Const(128 + 0, width: 8)),
+        memory[3].assign(Const(1, width: 8)),
+        // asm: lit 1
+        memory[4].assign(Const(1, width: 8)),
+        memory[5].assign(Const(1, width: 8)),
+        // asm: rf.r1 lit
+        memory[6].assign(Const(128 + 1, width: 8)),
+        memory[7].assign(Const(1, width: 8)),
+        // asm: lit 11
+        memory[8].assign(Const(1, width: 8)),
+        memory[9].assign(Const(11, width: 8)),
+        // asm: rf.r2 lit
+        memory[10].assign(Const(128 + 2, width: 8)),
+        memory[11].assign(Const(1, width: 8)),
+        // asm: alu.operand.a rf.r0
+        memory[12].assign(Const(11, width: 8)),
+        memory[13].assign(Const(128 + 0, width: 8)),
+        // asm: alu.operand.b rf.r1
+        memory[14].assign(Const(12, width: 8)),
+        memory[15].assign(Const(128 + 1, width: 8)),
+        // asm: alu.op rf.r2
+        memory[16].assign(Const(14, width: 8)),
+        memory[17].assign(Const(128 + 2, width: 8)),
+        // asm: rf.r3 alu.result
+        memory[18].assign(Const(128 + 3, width: 8)),
+        memory[19].assign(Const(13, width: 8)),
+        // asm: aux.nop
+        memory[20].assign(Const(0, width: 8)),
+        memory[21].assign(Const(1, width: 8)),
+      ]);
+    }
 
     addCombinational([When(readIffs)]);
 
@@ -98,4 +115,22 @@ class MemoryUnit extends Module {
   }
 
   late final Var outputData;
+}
+
+String main({bool noPrint = false}) {
+  final systemverilog = MemoryUnit(
+    Var(),
+    Var(),
+    Var(),
+    Var(width: 16),
+    Var(width: 16),
+    actualAddressSpace: 3,
+  ).emit();
+
+  if (!noPrint) {
+    // ignore: avoid_print
+    print(systemverilog);
+  }
+
+  return systemverilog;
 }

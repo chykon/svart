@@ -128,3 +128,16 @@ class LoadStoreUnit extends Module {
     store: (byte: 2, halfword: 3),
   );
 }
+
+String main({bool noPrint = false}) {
+  final systemverilog =
+      LoadStoreUnit(Var(), Var(width: 3), Var(width: 8), Var(), Var(width: 16))
+          .emit();
+
+  if (!noPrint) {
+    // ignore: avoid_print
+    print(systemverilog);
+  }
+
+  return systemverilog;
+}

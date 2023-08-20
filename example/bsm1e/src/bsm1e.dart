@@ -295,3 +295,14 @@ class BSM1E extends Module {
 
   static const _startAddress = 0x0000;
 }
+
+String main({bool noPrint = false}) {
+  final systemverilog = BSM1E(Var(), Var()).emit();
+
+  if (!noPrint) {
+    // ignore: avoid_print
+    print(systemverilog);
+  }
+
+  return systemverilog;
+}

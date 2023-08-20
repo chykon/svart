@@ -10,7 +10,7 @@ module instruction_fetch_unit (
       current_address <= jump_address;
     end else begin
       if (next) begin
-        current_address <= (current_address) + (15'h2);
+        current_address <= (current_address) + (15'h1);
       end
     end
   end

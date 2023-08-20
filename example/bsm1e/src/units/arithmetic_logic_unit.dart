@@ -146,3 +146,15 @@ class ArithmeticLogicUnit extends Module {
     sub: 12
   );
 }
+
+String main({bool noPrint = false}) {
+  final systemverilog =
+      ArithmeticLogicUnit(Var(), Var(width: 2), Var(width: 8)).emit();
+
+  if (!noPrint) {
+    // ignore: avoid_print
+    print(systemverilog);
+  }
+
+  return systemverilog;
+}

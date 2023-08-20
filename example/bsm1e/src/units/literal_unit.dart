@@ -15,3 +15,14 @@ class LiteralUnit extends Module {
 
   late final Var outputValue;
 }
+
+String main({bool noPrint = false}) {
+  final systemverilog = LiteralUnit(Var(), Var(), Var(width: 8)).emit();
+
+  if (!noPrint) {
+    // ignore: avoid_print
+    print(systemverilog);
+  }
+
+  return systemverilog;
+}

@@ -37,6 +37,8 @@ module load_store_unit (
       memory_access_load_halfword <= 1'h0;
       memory_access_store_byte <= 1'h0;
       memory_access_store_halfword <= 1'h0;
+    end else begin
+      target_data <= memory_data;
     end
     if ((act) != (3'h0)) begin
       if ((act) == (3'h1)) begin
