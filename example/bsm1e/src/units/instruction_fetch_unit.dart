@@ -23,7 +23,7 @@ class InstructionFetchUnit extends Module {
             next,
             then: [
               currentAddress.assign(
-                currentAddress.add(Const(2, width: currentAddress.width)),
+                currentAddress.add(Const(1, width: currentAddress.width)),
               )
             ],
           )
