@@ -40,6 +40,7 @@ class LoadStoreUnit extends Module {
           memoryAccess.store.byte.assign(Const(0)),
           memoryAccess.store.halfword.assign(Const(0))
         ],
+        orElse: [targetData.assign(memoryData)],
       ),
       If(
         act.neq(Const(actcode.none, width: act.width)),
