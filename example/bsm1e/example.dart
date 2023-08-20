@@ -10,7 +10,32 @@ class BSM1ETestbench extends Module {
 
     addSubmodule(BSM1E(clock, reset));
 
-    addInitial([Dump(moduleName: definitionName, fileName: vcdFileName)]);
+    addInitial([
+      Dump(moduleName: definitionName, fileName: vcdFileName),
+      clock.assign(Const(0)),
+      clock.assign(Const(1)),
+      Delay(1),
+      clock.assign(Const(0)),
+      Delay(1),
+      clock.assign(Const(1)),
+      reset.assign(Const(1)),
+      Delay(1),
+      clock.assign(Const(0)),
+      reset.assign(Const(0)),
+      Delay(1),
+      ...() {
+        final actions = <Action>[];
+        for (var i = 0; i < 11; ++i) {
+          actions.addAll([
+            clock.assign(Const(1)),
+            Delay(1),
+            clock.assign(Const(0)),
+            Delay(1),
+          ]);
+        }
+        return actions;
+      }(),
+    ]);
   }
 }
 
