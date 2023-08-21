@@ -531,8 +531,9 @@ abstract class Module {
       if (ports.isNotEmpty) ' ($ports);\n' else ';\n',
       internals.join('\n'),
       if (internals.join('\n').isNotEmpty) '\n',
-      submodules.instantiations.join('\n'),
+      submodules.instantiations.join(),
       if (submodules.instantiations.join('\n').isNotEmpty) '\n\n',
+      if (internals.join('\n').isNotEmpty) '\n',
       initials.join('\n'),
       combinationals.join('\n'),
       if (ports.isNotEmpty &&
@@ -542,7 +543,7 @@ abstract class Module {
       syncSequentials.join('\n'),
       'endmodule\n',
     ];
-    return result.join();
+    return result.join().replaceAll('\n\n\n', '\n\n');
   }
 
   /// Module definition name.
