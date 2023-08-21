@@ -82,7 +82,7 @@ class Mux2to1Testbench extends Module {
       b.assign(Const(1)),
       sel.assign(Const(1)),
       Delay(1),
-      Assert(y.eq(Const(1)))
+      Assert(y.eq(Const(1))),
     ]);
   }
 }

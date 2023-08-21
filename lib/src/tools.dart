@@ -30,7 +30,7 @@ class IcarusVerilog {
       '-Winfloop',
       '-Wsensitivity-entire-vector',
       '-Wfloating-nets',
-      '-s$topModule'
+      '-s$topModule',
     ];
     final result =
         Process.runSync('iverilog', [...setup, inputFile, '-o$outputFile']);
@@ -46,9 +46,15 @@ class IcarusVerilog {
     if ((result.stderr as String).isNotEmpty) {
       final stderr = (result.stderr as String).split('\n').where((string) {
         if (RegExp('^.+:[1-9][0-9]*: sorry: constant selects in '
-                'always_[*] processes are not currently supported '
-                r'[(]all bits will be included[)][.]$')
-            .hasMatch(string)) {
+                    'always_[*] processes are not currently supported '
+                    r'[(]all bits will be included[)][.]$')
+                .hasMatch(string) ||
+            RegExp('^.+:[1-9][0-9]*: warning: always_comb process '
+                    r'has no sensitivities[.]$')
+                .hasMatch(string) ||
+            RegExp(r'^.+:[1-9][0-9]*: warning: System task [(][$]fatal[)] '
+                    r'cannot be synthesized in an always_ff process[.]$')
+                .hasMatch(string)) {
           return false;
         }
         return true;
