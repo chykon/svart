@@ -86,7 +86,7 @@ class UTF8Encoder extends Module {
               count.assign(Const(3, width: 2)),
               offset.assign(Const(0xF0, width: 8)),
             ],
-          )
+          ),
         ],
         orElse: [status.assign(Const(UTF8Encoder.statusFailure))],
       ),
@@ -144,13 +144,13 @@ class UTF8Encoder extends Module {
                         .part(7, 0),
                   ),
                   bytes.assign(byte.cat(bytes.part(23, 0))),
-                  status.assign(Const(UTF8Encoder.statusSuccess))
+                  status.assign(Const(UTF8Encoder.statusSuccess)),
                 ],
-              )
+              ),
             ],
-          )
+          ),
         ],
-      )
+      ),
     ]);
   }
 
