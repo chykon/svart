@@ -62,9 +62,9 @@ class Counter4Bit extends Module {
         reset,
         then: [value.assign(Const(0, width: 4))],
         orElse: [
-          If(enable, then: [value.assign(value.add(Const(1, width: 4)))])
+          If(enable, then: [value.assign(value.add(Const(1, width: 4)))]),
         ],
-      )
+      ),
     ]);
   }
 

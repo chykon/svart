@@ -66,7 +66,7 @@ class UTF8Decoder extends Module {
           bytesNeeded.assign(Const(0, width: 2)),
           lowerBoundary.assign(Const(0x80, width: 8)),
           upperBoundary.assign(Const(0xBF, width: 8)),
-          status.assign(Const(UTF8Decoder.statusInitial, width: 3))
+          status.assign(Const(UTF8Decoder.statusInitial, width: 3)),
         ],
         orElse: [
           If(
@@ -85,7 +85,7 @@ class UTF8Decoder extends Module {
                           codepoint.assign(Const(0, width: 13).cat(byte)),
                           status.assign(
                             Const(UTF8Decoder.statusSuccess, width: 3),
-                          )
+                          ),
                         ],
                       ),
                       Iff(
@@ -100,7 +100,7 @@ class UTF8Decoder extends Module {
                           ),
                           status.assign(
                             Const(UTF8Decoder.statusInprocess, width: 3),
-                          )
+                          ),
                         ],
                       ),
                       Iff(
@@ -115,9 +115,9 @@ class UTF8Decoder extends Module {
                               If(
                                 byte.eq(Const(0xED, width: 8)),
                                 then: [
-                                  upperBoundary.assign(Const(0x9F, width: 8))
+                                  upperBoundary.assign(Const(0x9F, width: 8)),
                                 ],
-                              )
+                              ),
                             ],
                           ),
                           bytesNeeded.assign(Const(2, width: 2)),
@@ -127,7 +127,7 @@ class UTF8Decoder extends Module {
                           ),
                           status.assign(
                             Const(UTF8Decoder.statusInprocess, width: 3),
-                          )
+                          ),
                         ],
                       ),
                       Iff(
@@ -142,9 +142,9 @@ class UTF8Decoder extends Module {
                               If(
                                 byte.eq(Const(0xF4, width: 8)),
                                 then: [
-                                  upperBoundary.assign(Const(0x8F, width: 8))
+                                  upperBoundary.assign(Const(0x8F, width: 8)),
                                 ],
-                              )
+                              ),
                             ],
                           ),
                           bytesNeeded.assign(Const(3, width: 2)),
@@ -154,14 +154,14 @@ class UTF8Decoder extends Module {
                           ),
                           status.assign(
                             Const(UTF8Decoder.statusInprocess, width: 3),
-                          )
+                          ),
                         ],
-                      )
+                      ),
                     ],
                     orElse: [
-                      status.assign(Const(UTF8Decoder.statusFailure, width: 3))
+                      status.assign(Const(UTF8Decoder.statusFailure, width: 3)),
                     ],
-                  )
+                  ),
                 ],
                 orElse: [
                   If(
@@ -182,12 +182,12 @@ class UTF8Decoder extends Module {
                           bytesSeen.assign(Const(0, width: 2)),
                           status.assign(
                             Const(UTF8Decoder.statusSuccess, width: 3),
-                          )
+                          ),
                         ],
                         orElse: [
-                          bytesSeen.assign(bytesSeen.add(Const(1, width: 2)))
+                          bytesSeen.assign(bytesSeen.add(Const(1, width: 2))),
                         ],
-                      )
+                      ),
                     ],
                     orElse: [
                       codepoint.assign(Const(0, width: 21)),
@@ -197,15 +197,15 @@ class UTF8Decoder extends Module {
                       upperBoundary.assign(Const(0xBF, width: 8)),
                       status.assign(
                         Const(UTF8Decoder.statusFailureRepeat, width: 3),
-                      )
+                      ),
                     ],
-                  )
+                  ),
                 ],
-              )
+              ),
             ],
-          )
+          ),
         ],
-      )
+      ),
     ]);
   }
 

@@ -143,7 +143,7 @@ class UTF8DecoderTestbench extends Module {
           }
         }
         return actions;
-      }()
+      }(),
     ]);
   }
 }

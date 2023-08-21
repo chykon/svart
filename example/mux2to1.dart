@@ -57,7 +57,7 @@ class Mux2to1 extends Module {
       // --------------
       // The type of assignment (blocking or non-blocking) depends
       // on the type of procedure.
-      If(sel, then: [y.assign(a)], orElse: [y.assign(b)])
+      If(sel, then: [y.assign(a)], orElse: [y.assign(b)]),
     ]);
   }
 

@@ -258,6 +258,6 @@ abstract class Keywords {
     'within',
     'wor',
     'xnor',
-    'xor'
+    'xor',
   ];
 }
