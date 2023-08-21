@@ -39,7 +39,7 @@ class UTF8EncoderTestbench extends Module {
       ...[
         codepoint.assign(Const(0x110000, width: 21)),
         Delay(1),
-        Assert(status.eq(Const(UTF8Encoder.statusFailure)))
+        Assert(status.eq(Const(UTF8Encoder.statusFailure))),
       ],
       // Let's generate test values from an external file.
       // Used "UTF-8 encoded sample plain-text file"
@@ -63,7 +63,7 @@ class UTF8EncoderTestbench extends Module {
             codepoint.assign(Const(testCodepoint, width: 21)),
             Delay(1),
             Assert(status.eq(Const(UTF8Encoder.statusSuccess))),
-            Assert(bytes.eq(Const(expectedOutput, width: 32)))
+            Assert(bytes.eq(Const(expectedOutput, width: 32))),
           ]);
         }
         return actions;
@@ -86,11 +86,11 @@ class UTF8EncoderTestbench extends Module {
             codepoint.assign(Const(testCodepoint, width: 21)),
             Delay(1),
             Assert(status.eq(Const(UTF8Encoder.statusSuccess))),
-            Assert(bytes.eq(Const(expectedOutput, width: 32)))
+            Assert(bytes.eq(Const(expectedOutput, width: 32))),
           ]);
         }
         return actions;
-      }()
+      }(),
     ]);
   }
 }

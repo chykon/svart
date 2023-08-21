@@ -30,7 +30,7 @@ class IcarusVerilog {
       '-Winfloop',
       '-Wsensitivity-entire-vector',
       '-Wfloating-nets',
-      '-s$topModule'
+      '-s$topModule',
     ];
     final result =
         Process.runSync('iverilog', [...setup, inputFile, '-o$outputFile']);

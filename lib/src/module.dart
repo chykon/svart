@@ -140,7 +140,7 @@ abstract class Module {
         for (final varia in [
           ...this.inputs,
           ...this.outputs,
-          ...this.internals
+          ...this.internals,
         ]) {
           if (input.drivers.contains(varia)) {
             connections.add('.${input.name}(${varia.name})');
@@ -229,7 +229,7 @@ abstract class Module {
             }
             auxiliaries.insertAll(0, [
               ...parsedVaria.auxiliaries,
-              '  logic$width$name = ${parsedVaria.basic};'
+              '  logic$width$name = ${parsedVaria.basic};',
             ]);
             if (bypassPartSelect) {
               final auxiliaryDeclarations = <String>[];
@@ -304,8 +304,8 @@ abstract class Module {
           final basics = [
             [
               '${assignment.destination.name} $assignmentOperator ',
-              '${parsedVaria.basic};'
-            ].join()
+              '${parsedVaria.basic};',
+            ].join(),
           ];
           final auxiliaries = parsedVaria.auxiliaries;
           if (procedure is Combinational) {
@@ -540,7 +540,7 @@ abstract class Module {
           syncSequentials.join('\n').isNotEmpty)
         '\n',
       syncSequentials.join('\n'),
-      'endmodule\n'
+      'endmodule\n',
     ];
     return result.join();
   }
