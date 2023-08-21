@@ -247,7 +247,8 @@ class BSM1E extends Module {
                     ifu.to.next.assign(Const(0)),
                     mu.to.address.assign(lsu.from.targetAddress),
                     lsu.to.memoryData.assign(mu.from.outputData),
-                    nextState.assign(Const(_state.load, width: nextState.width)),
+                    nextState
+                        .assign(Const(_state.load, width: nextState.width)),
                   ],
                 ),
                 Iff(
