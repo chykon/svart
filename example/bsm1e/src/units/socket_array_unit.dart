@@ -117,7 +117,7 @@ class SocketArrayUnit extends Module {
                     alpha.eq(Const(index.lit, width: alpha.width)),
                     then: [
                       toLU.inputValue.assign(omega),
-                      toLU.write.assign(Const(1))
+                      toLU.write.assign(Const(1)),
                     ],
                   ),
                   // asm: <rf.r0-rf.r127> <source> (abstract)
@@ -138,7 +138,7 @@ class SocketArrayUnit extends Module {
                             then: [
                               toRFU.address.assign(alpha.part(6, 0)),
                               toRFU.inputData.assign(fromLU.outputValue),
-                              toRFU.write.assign(Const(1))
+                              toRFU.write.assign(Const(1)),
                             ],
                           ),
                           // asm: <rf.r0-rf.r127> br.address.low
@@ -151,7 +151,7 @@ class SocketArrayUnit extends Module {
                               toRFU.inputData.assign(
                                 fromCFU.branchAddress.part(6, 0).cat(Const(0)),
                               ),
-                              toRFU.write.assign(Const(1))
+                              toRFU.write.assign(Const(1)),
                             ],
                           ),
                           // asm: <rf.r0-rf.r127> br.address.high
@@ -163,7 +163,7 @@ class SocketArrayUnit extends Module {
                               toRFU.address.assign(alpha.part(6, 0)),
                               toRFU.inputData
                                   .assign(fromCFU.branchAddress.part(14, 7)),
-                              toRFU.write.assign(Const(1))
+                              toRFU.write.assign(Const(1)),
                             ],
                           ),
                           // asm: <rf.r0-rf.r127> mem.data.low
@@ -175,7 +175,7 @@ class SocketArrayUnit extends Module {
                               toRFU.address.assign(alpha.part(6, 0)),
                               toRFU.inputData
                                   .assign(fromLSU.targetData.part(7, 0)),
-                              toRFU.write.assign(Const(1))
+                              toRFU.write.assign(Const(1)),
                             ],
                           ),
                           // asm: <rf.r0-rf.r127> mem.data.high
@@ -187,7 +187,7 @@ class SocketArrayUnit extends Module {
                               toRFU.address.assign(alpha.part(6, 0)),
                               toRFU.inputData
                                   .assign(fromLSU.targetData.part(15, 8)),
-                              toRFU.write.assign(Const(1))
+                              toRFU.write.assign(Const(1)),
                             ],
                           ),
                           // asm: <rf.r0-rf.r127> alu.result
@@ -198,12 +198,12 @@ class SocketArrayUnit extends Module {
                             then: [
                               toRFU.address.assign(alpha.part(6, 0)),
                               toRFU.inputData.assign(fromALU.result),
-                              toRFU.write.assign(Const(1))
+                              toRFU.write.assign(Const(1)),
                             ],
-                          )
+                          ),
                         ],
                         orElse: [illegalInstruction.assign(Const(1))],
-                      )
+                      ),
                     ],
                   ),
                   // asm: <destination> <rf.r0-rf.r127> (abstract)
@@ -231,7 +231,7 @@ class SocketArrayUnit extends Module {
                                   ControlFlowUnit.actcode.setAddress.lowPart,
                                   width: toCFU.act.width,
                                 ),
-                              )
+                              ),
                             ],
                           ),
                           // asm: br.address.high <rf.r0-rf.r127>
@@ -247,7 +247,7 @@ class SocketArrayUnit extends Module {
                                   ControlFlowUnit.actcode.setAddress.highPart,
                                   width: toCFU.act.width,
                                 ),
-                              )
+                              ),
                             ],
                           ),
                           // asm: br.value <rf.r0-rf.r127>
@@ -261,7 +261,7 @@ class SocketArrayUnit extends Module {
                                   ControlFlowUnit.actcode.setValue,
                                   width: toCFU.act.width,
                                 ),
-                              )
+                              ),
                             ],
                           ),
                           // asm: br.op <rf.r0-rf.r127>
@@ -283,10 +283,10 @@ class SocketArrayUnit extends Module {
                                       ControlFlowUnit.actcode.operate,
                                       width: toCFU.act.width,
                                     ),
-                                  )
+                                  ),
                                 ],
                                 orElse: [illegalInstruction.assign(Const(1))],
-                              )
+                              ),
                             ],
                           ),
                           // asm: mem.address.low <rf.r0-rf.r127>
@@ -302,7 +302,7 @@ class SocketArrayUnit extends Module {
                                   LoadStoreUnit.actcode.setAddress.lowByte,
                                   width: toLSU.act.width,
                                 ),
-                              )
+                              ),
                             ],
                           ),
                           // asm: mem.address.high <rf.r0-rf.r127>
@@ -318,7 +318,7 @@ class SocketArrayUnit extends Module {
                                   LoadStoreUnit.actcode.setAddress.highByte,
                                   width: toLSU.act.width,
                                 ),
-                              )
+                              ),
                             ],
                           ),
                           // asm: mem.data.low <rf.r0-rf.r127>
@@ -334,7 +334,7 @@ class SocketArrayUnit extends Module {
                                   LoadStoreUnit.actcode.setData.lowByte,
                                   width: toLSU.act.width,
                                 ),
-                              )
+                              ),
                             ],
                           ),
                           // asm: mem.data.high <rf.r0-rf.r127>
@@ -350,7 +350,7 @@ class SocketArrayUnit extends Module {
                                   LoadStoreUnit.actcode.setData.highByte,
                                   width: toLSU.act.width,
                                 ),
-                              )
+                              ),
                             ],
                           ),
                           // asm: mem.op <rf.r0-rf.r127>
@@ -372,10 +372,10 @@ class SocketArrayUnit extends Module {
                                       LoadStoreUnit.actcode.operate,
                                       width: toLSU.act.width,
                                     ),
-                                  )
+                                  ),
                                 ],
                                 orElse: [illegalInstruction.assign(Const(1))],
-                              )
+                              ),
                             ],
                           ),
                           // asm: alu.operand.a <rf.r0-rf.r127>
@@ -391,7 +391,7 @@ class SocketArrayUnit extends Module {
                                   ArithmeticLogicUnit.actcode.setOperand.a,
                                   width: toALU.act.width,
                                 ),
-                              )
+                              ),
                             ],
                           ),
                           // asm: alu.operand.b <rf.r0-rf.r127>
@@ -407,7 +407,7 @@ class SocketArrayUnit extends Module {
                                   ArithmeticLogicUnit.actcode.setOperand.b,
                                   width: toALU.act.width,
                                 ),
-                              )
+                              ),
                             ],
                           ),
                           // asm: alu.op <rf.r0-rf.r127>
@@ -429,24 +429,24 @@ class SocketArrayUnit extends Module {
                                       ArithmeticLogicUnit.actcode.operate,
                                       width: toALU.act.width,
                                     ),
-                                  )
+                                  ),
                                 ],
                                 orElse: [illegalInstruction.assign(Const(1))],
-                              )
+                              ),
                             ],
-                          )
+                          ),
                         ],
                         orElse: [illegalInstruction.assign(Const(1))],
-                      )
+                      ),
                     ],
-                  )
+                  ),
                 ],
                 orElse: [illegalInstruction.assign(Const(1))],
-              )
+              ),
             ],
-          )
+          ),
         ],
-      )
+      ),
     ]);
   }
 

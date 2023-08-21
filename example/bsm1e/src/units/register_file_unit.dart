@@ -41,7 +41,7 @@ class RegisterFileUnit extends Module {
     addCombinational([When(readIffs)]);
 
     addSyncSequential(PosEdge(clock), [
-      If(write, then: [When(writeIffs)])
+      If(write, then: [When(writeIffs)]),
     ]);
   }
 

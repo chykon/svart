@@ -38,7 +38,7 @@ class LoadStoreUnit extends Module {
           memoryAccess.load.byte.assign(Const(0)),
           memoryAccess.load.halfword.assign(Const(0)),
           memoryAccess.store.byte.assign(Const(0)),
-          memoryAccess.store.halfword.assign(Const(0))
+          memoryAccess.store.halfword.assign(Const(0)),
         ],
         orElse: [targetData.assign(memoryData)],
       ),
@@ -50,13 +50,13 @@ class LoadStoreUnit extends Module {
               Iff(
                 act.eq(Const(actcode.setAddress.lowByte, width: act.width)),
                 then: [
-                  targetAddress.assign(targetAddress.part(15, 8).cat(data))
+                  targetAddress.assign(targetAddress.part(15, 8).cat(data)),
                 ],
               ),
               Iff(
                 act.eq(Const(actcode.setAddress.highByte, width: act.width)),
                 then: [
-                  targetAddress.assign(data.cat(targetAddress.part(7, 0)))
+                  targetAddress.assign(data.cat(targetAddress.part(7, 0))),
                 ],
               ),
               Iff(
@@ -77,14 +77,14 @@ class LoadStoreUnit extends Module {
                         memoryAccess.load.byte.assign(Const(1)),
                         targetData.assign(
                           targetData.part(15, 8).cat(memoryData.part(7, 0)),
-                        )
+                        ),
                       ],
                     ),
                     Iff(
                       op.eq(Const(opcode.load.halfword, width: op.width)),
                       then: [
                         memoryAccess.load.halfword.assign(Const(1)),
-                        targetData.assign(memoryData)
+                        targetData.assign(memoryData),
                       ],
                     ),
                     Iff(
@@ -94,18 +94,18 @@ class LoadStoreUnit extends Module {
                     Iff(
                       op.eq(Const(opcode.store.halfword, width: op.width)),
                       then: [memoryAccess.store.halfword.assign(Const(1))],
-                    )
-                  ])
+                    ),
+                  ]),
                 ],
-              )
+              ),
             ],
             orElse: [
               // `Act` must be in a certain range.
-              Assert(act.lte(Const(actcode.operate, width: act.width)))
+              Assert(act.lte(Const(actcode.operate, width: act.width))),
             ],
-          )
+          ),
         ],
-      )
+      ),
     ]);
   }
 

@@ -33,13 +33,13 @@ class ControlFlowUnit extends Module {
                 act.eq(Const(actcode.setAddress.lowPart, width: act.width)),
                 then: [
                   branchAddress
-                      .assign(branchAddress.part(14, 7).cat(data.part(7, 1)))
+                      .assign(branchAddress.part(14, 7).cat(data.part(7, 1))),
                 ],
               ),
               Iff(
                 act.eq(Const(actcode.setAddress.highPart, width: act.width)),
                 then: [
-                  branchAddress.assign(data.cat(branchAddress.part(6, 0)))
+                  branchAddress.assign(data.cat(branchAddress.part(6, 0))),
                 ],
               ),
               Iff(
@@ -61,7 +61,7 @@ class ControlFlowUnit extends Module {
                           If(
                             value.eq(Const(0)),
                             then: [branch.assign(Const(1))],
-                          )
+                          ),
                         ],
                       ),
                       Iff(
@@ -70,25 +70,25 @@ class ControlFlowUnit extends Module {
                           If(
                             value.neq(Const(0)),
                             then: [branch.assign(Const(1))],
-                          )
+                          ),
                         ],
-                      )
+                      ),
                     ],
                     orElse: [
                       // `Op` must be in a certain range.
-                      Assert(op.lte(Const(opcode.branch.neqz, width: op.width)))
+                      Assert(op.lte(Const(opcode.branch.neqz, width: op.width))),
                     ],
-                  )
+                  ),
                 ],
-              )
+              ),
             ],
             orElse: [
               // `Act` must be in a certain range.
-              Assert(act.lte(Const(actcode.operate, width: act.width)))
+              Assert(act.lte(Const(actcode.operate, width: act.width))),
             ],
-          )
+          ),
         ],
-      )
+      ),
     ]);
   }
 

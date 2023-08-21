@@ -24,11 +24,11 @@ class InstructionFetchUnit extends Module {
             then: [
               currentAddress.assign(
                 currentAddress.add(Const(1, width: currentAddress.width)),
-              )
+              ),
             ],
-          )
+          ),
         ],
-      )
+      ),
     ]);
   }
 

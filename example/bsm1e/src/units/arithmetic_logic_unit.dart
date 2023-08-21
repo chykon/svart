@@ -57,7 +57,7 @@ class ArithmeticLogicUnit extends Module {
                       then: [
                         result.assign(
                           Const(0, width: 7).cat(operandA.eq(operandB)),
-                        )
+                        ),
                       ],
                     ),
                     Iff(
@@ -65,7 +65,7 @@ class ArithmeticLogicUnit extends Module {
                       then: [
                         result.assign(
                           Const(0, width: 7).cat(operandA.neq(operandB)),
-                        )
+                        ),
                       ],
                     ),
                     Iff(
@@ -73,7 +73,7 @@ class ArithmeticLogicUnit extends Module {
                       then: [
                         result.assign(
                           Const(0, width: 7).cat(operandA.lt(operandB)),
-                        )
+                        ),
                       ],
                     ),
                     Iff(
@@ -81,7 +81,7 @@ class ArithmeticLogicUnit extends Module {
                       then: [
                         result.assign(
                           Const(0, width: 7).cat(operandA.gt(operandB)),
-                        )
+                        ),
                       ],
                     ),
                     Iff(
@@ -89,7 +89,7 @@ class ArithmeticLogicUnit extends Module {
                       then: [
                         result.assign(
                           Const(0, width: 7).cat(operandA.lte(operandB)),
-                        )
+                        ),
                       ],
                     ),
                     Iff(
@@ -97,7 +97,7 @@ class ArithmeticLogicUnit extends Module {
                       then: [
                         result.assign(
                           Const(0, width: 7).cat(operandA.gte(operandB)),
-                        )
+                        ),
                       ],
                     ),
                     Iff(
@@ -107,18 +107,18 @@ class ArithmeticLogicUnit extends Module {
                     Iff(
                       op.eq(Const(opcode.sub, width: op.width)),
                       then: [result.assign(operandA.sub(operandB))],
-                    )
+                    ),
                   ],
                   orElse: [
                     // Operation must be in a certain range.
-                    Assert(op.lte(Const(opcode.sub, width: op.width)))
+                    Assert(op.lte(Const(opcode.sub, width: op.width))),
                   ],
-                )
+                ),
               ],
-            )
-          ])
+            ),
+          ]),
         ],
-      )
+      ),
     ]);
   }
 

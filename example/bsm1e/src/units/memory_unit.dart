@@ -42,13 +42,13 @@ class MemoryUnit extends Module {
                   address.part(0, 0).eq(Const(0)),
                   then: [memory[i].assign(inputData.part(7, 0))],
                   orElse: [memory[i + 1].assign(inputData.part(7, 0))],
-                )
+                ),
               ],
               orElse: [
                 memory[i].assign(inputData.part(7, 0)),
-                memory[i + 1].assign(inputData.part(15, 8))
+                memory[i + 1].assign(inputData.part(15, 8)),
               ],
-            )
+            ),
           ],
         ),
       );
@@ -110,7 +110,7 @@ class MemoryUnit extends Module {
     addCombinational([When(readIffs)]);
 
     addSyncSequential(PosEdge(clock), [
-      If(write, then: [When(writeIffs)])
+      If(write, then: [When(writeIffs)]),
     ]);
   }
 

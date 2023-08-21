@@ -9,7 +9,7 @@ class LiteralUnit extends Module {
     outputValue = addOutput('output_value', width: 8);
 
     addSyncSequential(PosEdge(clock), [
-      If(write, then: [outputValue.assign(inputValue)])
+      If(write, then: [outputValue.assign(inputValue)]),
     ]);
   }
 

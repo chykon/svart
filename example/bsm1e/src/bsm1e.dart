@@ -221,7 +221,7 @@ class BSM1E extends Module {
               ifu.to.jumpAddress.assign(Const(_startAddress, width: 15)),
               ifu.to.jump.assign(Const(1)),
               lsu.to.resetMemoryAccess.assign(Const(1)),
-              nextState.assign(Const(_state.main, width: nextState.width))
+              nextState.assign(Const(_state.main, width: nextState.width)),
             ],
           ),
           Iff(
@@ -237,7 +237,7 @@ class BSM1E extends Module {
                   then: [
                     nextState.assign(
                       Const(_state.illegalInstruction, width: nextState.width),
-                    )
+                    ),
                   ],
                 ),
                 Iff(
@@ -247,7 +247,7 @@ class BSM1E extends Module {
                     ifu.to.next.assign(Const(0)),
                     mu.to.address.assign(lsu.from.targetAddress),
                     lsu.to.memoryData.assign(mu.from.outputData),
-                    nextState.assign(Const(_state.load, width: nextState.width))
+                    nextState.assign(Const(_state.load, width: nextState.width)),
                   ],
                 ),
                 Iff(
@@ -257,8 +257,8 @@ class BSM1E extends Module {
                     ifu.to.jumpAddress.assign(cfu.from.branchAddress),
                     ifu.to.jump.assign(Const(1)),
                   ],
-                )
-              ])
+                ),
+              ]),
             ],
           ),
           Iff(
@@ -266,21 +266,21 @@ class BSM1E extends Module {
             then: [
               lsu.to.memoryData.assign(mu.from.outputData),
               lsu.to.resetMemoryAccess.assign(Const(1)),
-              nextState.assign(Const(_state.main, width: nextState.width))
+              nextState.assign(Const(_state.main, width: nextState.width)),
             ],
-          )
+          ),
         ],
-      )
+      ),
     ]);
 
     addSyncSequential(PosEdge(clock), [
       If(
         reset,
         then: [
-          currentState.assign(Const(_state.initial, width: currentState.width))
+          currentState.assign(Const(_state.initial, width: currentState.width)),
         ],
         orElse: [currentState.assign(nextState)],
-      )
+      ),
     ]);
   }
 
