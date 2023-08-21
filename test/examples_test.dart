@@ -1,6 +1,16 @@
 import 'dart:io';
 import 'dart:math';
 import 'package:test/test.dart';
+import '../example/bsm1e/example.dart' as bsm1e_testbench;
+import '../example/bsm1e/src/bsm1e.dart' as bsm1e_core;
+import '../example/bsm1e/src/units/arithmetic_logic_unit.dart' as bsm1e_alu;
+import '../example/bsm1e/src/units/control_flow_unit.dart' as bsm1e_cfu;
+import '../example/bsm1e/src/units/instruction_fetch_unit.dart' as bsm1e_ifu;
+import '../example/bsm1e/src/units/literal_unit.dart' as bsm1e_lu;
+import '../example/bsm1e/src/units/load_store_unit.dart' as bsm1e_lsu;
+import '../example/bsm1e/src/units/memory_unit.dart' as bsm1e_mu;
+import '../example/bsm1e/src/units/register_file_unit.dart' as bsm1e_rfu;
+import '../example/bsm1e/src/units/socket_array_unit.dart' as bsm1e_sau;
 import '../example/example.dart' as counter4bit;
 import '../example/example_testbench.dart' as counter4bit_testbench;
 import '../example/mux2to1.dart' as mux2to1;
@@ -41,6 +51,83 @@ void main() {
           utf8decoder.main(noPrint: true),
           equals(File('$goldPath/utf8decoder.sv').readAsStringSync()),
         );
+      });
+
+      group('BSM1E:', () {
+        test('ArithmeticLogicUnit', () {
+          expect(
+            bsm1e_alu.main(noPrint: true),
+            equals(
+              File('$goldPath/bsm1e/arithmetic_logic_unit.sv')
+                  .readAsStringSync(),
+            ),
+          );
+        });
+        test('ControlFlowUnit', () {
+          expect(
+            bsm1e_cfu.main(noPrint: true),
+            equals(
+              File('$goldPath/bsm1e/control_flow_unit.sv').readAsStringSync(),
+            ),
+          );
+        });
+        test('InstructionFetchUnit', () {
+          expect(
+            bsm1e_ifu.main(noPrint: true),
+            equals(
+              File('$goldPath/bsm1e/instruction_fetch_unit.sv')
+                  .readAsStringSync(),
+            ),
+          );
+        });
+        test('LiteralUnit', () {
+          expect(
+            bsm1e_lu.main(noPrint: true),
+            equals(
+              File('$goldPath/bsm1e/literal_unit.sv').readAsStringSync(),
+            ),
+          );
+        });
+        test('LoadStoreUnit', () {
+          expect(
+            bsm1e_lsu.main(noPrint: true),
+            equals(
+              File('$goldPath/bsm1e/load_store_unit.sv').readAsStringSync(),
+            ),
+          );
+        });
+        test('MemoryUnit', () {
+          expect(
+            bsm1e_mu.main(noPrint: true),
+            equals(
+              File('$goldPath/bsm1e/memory_unit.sv').readAsStringSync(),
+            ),
+          );
+        });
+        test('RegisterFileUnit', () {
+          expect(
+            bsm1e_rfu.main(noPrint: true),
+            equals(
+              File('$goldPath/bsm1e/register_file_unit.sv').readAsStringSync(),
+            ),
+          );
+        });
+        test('SocketArrayUnit', () {
+          expect(
+            bsm1e_sau.main(noPrint: true),
+            equals(
+              File('$goldPath/bsm1e/socket_array_unit.sv').readAsStringSync(),
+            ),
+          );
+        });
+        test('Core', () {
+          expect(
+            bsm1e_core.main(noPrint: true),
+            equals(
+              File('$goldPath/bsm1e/bsm1e.sv').readAsStringSync(),
+            ),
+          );
+        });
       });
     });
 
@@ -163,6 +250,28 @@ void main() {
         });
 
         final result = utf8decoder_testbench.main(
+          noPrint: true,
+          vcdFileName: paths.vcdFileName,
+          svFileName: paths.svFileName,
+          vvpFileName: paths.vvpFileName,
+        );
+
+        expect(File(paths.vcdFileName).existsSync(), equals(true));
+
+        expect(result.stdoutCompile.isEmpty, equals(true));
+        expect(result.stderrCompile.isEmpty, equals(true));
+        expect(result.stdoutRun.isEmpty, equals(true));
+        expect(result.stderrRun.isEmpty, equals(true));
+      });
+
+      test('BSM1ETestbench', () {
+        final paths = generateUniquePaths();
+
+        addTearDown(() {
+          File(paths.pathBase).deleteSync(recursive: true);
+        });
+
+        final result = bsm1e_testbench.main(
           noPrint: true,
           vcdFileName: paths.vcdFileName,
           svFileName: paths.svFileName,
