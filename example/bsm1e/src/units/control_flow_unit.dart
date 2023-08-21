@@ -77,7 +77,8 @@ class ControlFlowUnit extends Module {
                     orElse: [
                       // `Op` must be in a certain range.
                       Assert(
-                          op.lte(Const(opcode.branch.neqz, width: op.width))),
+                        op.lte(Const(opcode.branch.neqz, width: op.width)),
+                      ),
                     ],
                   ),
                 ],
