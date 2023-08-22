@@ -20,3 +20,7 @@ echo "deb [signed-by=${output_pubkey_file}] ${dart_repository_url} stable main" 
 
 sudo apt-get update
 sudo apt-get install dart
+
+# Get project dependencies.
+
+dart pub get
