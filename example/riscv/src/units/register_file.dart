@@ -52,6 +52,14 @@ class RegisterFileUnit extends Module {
       }
     }
 
+    addInitial(() {
+      final actions = <Action>[];
+      for (final register in registers) {
+        actions.add(register.assign(Const(0, width: 32)));
+      }
+      return actions;
+    }());
+
     addCombinational(
       [registers[0].assign(Const(0, width: registers[0].width))],
     );
