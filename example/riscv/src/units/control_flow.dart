@@ -128,11 +128,11 @@ class ControlFlowUnit extends Module {
   late final Var branch;
 
   static final operation = (
-    beq: int.parse('000', radix: 3),
-    bne: int.parse('001', radix: 3),
-    blt: int.parse('100', radix: 3),
-    bge: int.parse('101', radix: 3),
-    bltu: int.parse('110', radix: 3),
-    bgeu: int.parse('111', radix: 3),
+    beq: int.parse('000', radix: 2),
+    bne: int.parse('001', radix: 2),
+    blt: int.parse('100', radix: 2),
+    bge: int.parse('101', radix: 2),
+    bltu: int.parse('110', radix: 2),
+    bgeu: int.parse('111', radix: 2),
   );
 }
