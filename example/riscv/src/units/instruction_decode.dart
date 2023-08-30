@@ -25,25 +25,25 @@ class InstructionDecodeUnit extends Module {
     addCombinational([funct7.assign(instruction.part(31, 25))]);
 
     final imm_4_0 = addInternal(name: 'imm_4_0', width: 5);
-    addCombinational([imm_4_0.assign(instruction.part(4, 0))]);
+    addCombinational([imm_4_0.assign(instruction.part(11, 7))]);
     final imm_4_1 = addInternal(name: 'imm_4_1', width: 4);
-    addCombinational([imm_4_1.assign(instruction.part(4, 1))]);
+    addCombinational([imm_4_1.assign(instruction.part(11, 8))]);
     final imm_10_1 = addInternal(name: 'imm_10_1', width: 10);
-    addCombinational([imm_10_1.assign(instruction.part(10, 1))]);
+    addCombinational([imm_10_1.assign(instruction.part(30, 21))]);
     final imm_10_5 = addInternal(name: 'imm_10_5', width: 6);
-    addCombinational([imm_10_5.assign(instruction.part(10, 5))]);
+    addCombinational([imm_10_5.assign(instruction.part(30, 25))]);
     final imm_11_0 = addInternal(name: 'imm_11_0', width: 12);
-    addCombinational([imm_11_0.assign(instruction.part(11, 0))]);
+    addCombinational([imm_11_0.assign(instruction.part(31, 20))]);
     final imm_11_5 = addInternal(name: 'imm_11_5', width: 7);
-    addCombinational([imm_11_5.assign(instruction.part(11, 5))]);
+    addCombinational([imm_11_5.assign(instruction.part(31, 25))]);
     final imm_11 = addInternal(name: 'imm_11');
-    addCombinational([imm_11.assign(instruction.part(11, 11))]);
+    addCombinational([imm_11.assign(instruction.part(7, 7))]);
     final imm_12 = addInternal(name: 'imm_12');
-    addCombinational([imm_12.assign(instruction.part(12, 12))]);
+    addCombinational([imm_12.assign(instruction.part(31, 31))]);
     final imm_19_12 = addInternal(name: 'imm_19_12', width: 8);
     addCombinational([imm_19_12.assign(instruction.part(19, 12))]);
     final imm_20 = addInternal(name: 'imm_20');
-    addCombinational([imm_20.assign(instruction.part(20, 20))]);
+    addCombinational([imm_20.assign(instruction.part(31, 31))]);
     final imm_31_12 = addInternal(name: 'imm_31_12', width: 20);
     addCombinational([imm_31_12.assign(instruction.part(31, 12))]);
 
