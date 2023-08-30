@@ -270,16 +270,30 @@ class LoadStoreUnit extends Module {
                       ],
                     ),
                   );
-                } else if (i != 3) {
+                } else if (i == 1) {
                   iffs.add(
                     Iff(
                       lowAddress.eq(Const(i, width: lowAddress.width)),
                       then: [
                         outputData.assign(
                           memData
-                              .part(31, 32 - (i * 8))
-                              .cat(regData.part((i * 8 * 2) - 1, i * 8))
-                              .cat(memData.part((i * 8) - 1, 0)),
+                              .part(31, 16)
+                              .cat(regData.part(7, 0))
+                              .cat(memData.part(7, 0)),
+                        ),
+                      ],
+                    ),
+                  );
+                } else if (i == 2) {
+                  iffs.add(
+                    Iff(
+                      lowAddress.eq(Const(i, width: lowAddress.width)),
+                      then: [
+                        outputData.assign(
+                          memData
+                              .part(31, 24)
+                              .cat(regData.part(7, 0))
+                              .cat(memData.part(15, 0)),
                         ),
                       ],
                     ),
@@ -290,7 +304,7 @@ class LoadStoreUnit extends Module {
                       lowAddress.eq(Const(i, width: lowAddress.width)),
                       then: [
                         outputData.assign(
-                          regData.part(31, 24).cat(memData.part(23, 0)),
+                          regData.part(7, 0).cat(memData.part(23, 0)),
                         ),
                       ],
                     ),
@@ -357,13 +371,13 @@ class LoadStoreUnit extends Module {
   late final Var outputData;
 
   static final operation = (
-    lb: int.parse('0000', radix: 4),
-    lh: int.parse('0001', radix: 4),
-    lw: int.parse('0010', radix: 4),
-    lbu: int.parse('0100', radix: 4),
-    lhu: int.parse('0101', radix: 4),
-    sb: int.parse('1000', radix: 4),
-    sh: int.parse('1001', radix: 4),
-    sw: int.parse('1010', radix: 4),
+    lb: int.parse('0000', radix: 2),
+    lh: int.parse('0001', radix: 2),
+    lw: int.parse('0010', radix: 2),
+    lbu: int.parse('0100', radix: 2),
+    lhu: int.parse('0101', radix: 2),
+    sb: int.parse('1000', radix: 2),
+    sh: int.parse('1001', radix: 2),
+    sw: int.parse('1010', radix: 2),
   );
 }
