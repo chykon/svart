@@ -16,11 +16,18 @@ declare -r dart_repository_file='/etc/apt/sources.list.d/dart_stable.list'
 
 echo "deb [signed-by=${output_pubkey_file}] ${dart_repository_url} stable main" | sudo tee ${dart_repository_file}
 
-# Install Dart SDK.
+# Update the list of available packages.
 
 sudo apt-get update
+
+# Install Dart SDK.
+
 sudo apt-get install dart
 
 # Get project dependencies.
 
 dart pub get
+
+# Install Icarus Verilog.
+
+sudo apt-get install iverilog
