@@ -1,0 +1,19 @@
+{
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu-22.04",
+  "updateContentCommand": "tool/devcontainer/setup.sh",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "Dart-Code.dart-code",
+        "CHIPSAlliance.verible",
+        "eirikpre.systemverilog"
+      ]
+    },
+    "codespaces": {
+      "openFiles": [
+        "example/example.dart",
+        "README.md"
+      ]
+    }
+  }
+}
