@@ -6,6 +6,8 @@ abstract class Tools {
   ///
   /// Version `12.0` is recommended.
   static final iverilog = IcarusVerilog();
+
+  static final verilator = Verilator();
 }
 
 /// The ICARUS Verilog Compilation System.
@@ -103,5 +105,58 @@ class IcarusVerilog {
       throw Exception('"vvp" exit code: ${result.exitCode}');
     }
     return (stdout: returnStdout, stderr: returnStderr);
+  }
+}
+
+class Verilator {
+  void compile(
+    String inputFile,
+    String topModule, {
+    String outputFile = 'out',
+    String outputDirectory = 'verilator_build',
+  }) {
+    final setup = [
+      '-Wall',
+      '-Wpedantic',
+      '--assert',
+      '--binary',
+      '--trace',
+
+      ...'-j 0'.split(' '),
+      ...'--top-module $topModule'.split(' '),
+      ...'--x-assign unique'.split(' '),
+
+      // The rule is disabled because it does not allow multiple
+      // modules to be placed in one file. This conflicts with the
+      // current way `SystemVerilog` code is generated.
+      '-Wno-DECLFILENAME',
+    ];
+
+    final result = Process.runSync(
+      'verilator',
+      [
+        ...setup,
+        ...'-Mdir $outputDirectory'.split(' '),
+        ...'-o $outputFile'.split(' '),
+        inputFile,
+      ],
+    );
+
+    print(result.stdout);
+    print(result.stderr);
+  }
+
+  void run({String file = 'verilator_build/out'}) {
+    const seed = 1234;
+
+    const arguments = [
+      '+verilator+seed+$seed',
+      '+verilator+rand+reset+2',
+    ];
+
+    final result = Process.runSync(file, arguments);
+
+    print(result.stdout);
+    print(result.stderr);
   }
 }

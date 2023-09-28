@@ -6,3 +6,6 @@ pubspec.lock
 out.sv
 out.vvp
 dump.vcd
+
+# Directories created by Verilator
+verilator_build/
