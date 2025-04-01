@@ -20,4 +20,4 @@ dependencies:
 
 dev_dependencies:
   test: ^1.24.4
-  very_good_analysis: ^5.0.0+1
+  very_good_analysis: ">=5.0.0+1 <8.0.0"
